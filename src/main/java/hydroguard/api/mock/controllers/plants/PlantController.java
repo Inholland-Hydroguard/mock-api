@@ -9,7 +9,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -48,9 +47,10 @@ public class PlantController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) LocalDateTime created,
-            @RequestParam(required = false) LocalDateTime updated) {
-
+            @RequestParam(required = false) LocalDateTime createdFrom,
+            @RequestParam(required = false) LocalDateTime createdTo,
+            @RequestParam(required = false) LocalDateTime updatedFrom,
+            @RequestParam(required = false) LocalDateTime updatedTo) {
 
         if (page < 1) {
             throw new IllegalArgumentException("Page number must be greater than or equal to 1");
@@ -58,7 +58,6 @@ public class PlantController {
         if (pageSize < 1 || pageSize > 100) {
             throw new IllegalArgumentException("Page size must be between 1 and 100");
         }
-
 
         List<PlantDTO> filteredPlants = plants;
 
@@ -68,15 +67,27 @@ public class PlantController {
                     .collect(Collectors.toList());
         }
 
-        if (created != null) {
+        if (createdFrom != null) {
             filteredPlants = filteredPlants.stream()
-                    .filter(plant -> plant.getCreatedAt().toLocalDate().equals(created.toLocalDate()))
+                    .filter(plant -> !plant.getCreatedAt().isBefore(createdFrom))
                     .collect(Collectors.toList());
         }
 
-        if (updated != null) {
+        if (createdTo != null) {
             filteredPlants = filteredPlants.stream()
-                    .filter(plant -> plant.getUpdatedAt().toLocalDate().equals(updated.toLocalDate()))
+                    .filter(plant -> !plant.getCreatedAt().isAfter(createdTo))
+                    .collect(Collectors.toList());
+        }
+
+        if (updatedFrom != null) {
+            filteredPlants = filteredPlants.stream()
+                    .filter(plant -> !plant.getUpdatedAt().isBefore(updatedFrom))
+                    .collect(Collectors.toList());
+        }
+
+        if (updatedTo != null) {
+            filteredPlants = filteredPlants.stream()
+                    .filter(plant -> !plant.getUpdatedAt().isAfter(updatedTo))
                     .collect(Collectors.toList());
         }
 
