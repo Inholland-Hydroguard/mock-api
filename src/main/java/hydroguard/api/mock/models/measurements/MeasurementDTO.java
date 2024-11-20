@@ -10,24 +10,24 @@ public class MeasurementDTO {
     private UUID sensorId;
     private Float moisturePercentage;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime date;
+    private LocalDateTime timestamp;
 
     public MeasurementDTO(UUID sensorId, Float moisturePercentage, LocalDateTime date) {
         this.sensorId = sensorId;
         this.moisturePercentage = moisturePercentage;
-        this.date = date;
+        this.timestamp = date;
     }
 
     public MeasurementDTO(UUID sensorId) {
         this.sensorId = sensorId;
         this.moisturePercentage = new Random().nextFloat();
-        this.date = LocalDateTime.now();
+        this.timestamp = LocalDateTime.now();
     }
 
     public MeasurementDTO() {
         this.sensorId = UUID.randomUUID();
         this.moisturePercentage = new Random().nextFloat();
-        this.date = LocalDateTime.now();
+        this.timestamp = LocalDateTime.now();
     }
 
     public Float getMoisturePercentage() {
@@ -46,11 +46,11 @@ public class MeasurementDTO {
         this.sensorId = sensorId;
     }
 
-    public LocalDateTime getDate() {
-        return date;
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 }
