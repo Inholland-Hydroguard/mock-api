@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -42,6 +43,7 @@ public class PlantController {
         return plantDTO;
     }
 
+    // sort uses the var names from the responses
     @GetMapping
     public PlantsDTO getAllPlants(
             @RequestParam(defaultValue = "1") int page,
@@ -50,7 +52,9 @@ public class PlantController {
             @RequestParam(required = false) LocalDateTime createdFrom,
             @RequestParam(required = false) LocalDateTime createdTo,
             @RequestParam(required = false) LocalDateTime updatedFrom,
-            @RequestParam(required = false) LocalDateTime updatedTo) {
+            @RequestParam(required = false) LocalDateTime updatedTo,
+            @RequestParam(required = false) String sortField,
+            @RequestParam(defaultValue = "asc") String sortDirection) {
 
         if (page < 1) {
             throw new IllegalArgumentException("Page number must be greater than or equal to 1");
@@ -89,6 +93,29 @@ public class PlantController {
             filteredPlants = filteredPlants.stream()
                     .filter(plant -> !plant.getUpdatedAt().isAfter(updatedTo))
                     .collect(Collectors.toList());
+        }
+
+        if (sortField != null) {
+            Comparator<PlantDTO> comparator;
+            switch (sortField) {
+                case "name":
+                    comparator = Comparator.comparing(PlantDTO::getName);
+                    break;
+                case "createdAt":
+                    comparator = Comparator.comparing(PlantDTO::getCreatedAt);
+                    break;
+                case "updatedAt":
+                    comparator = Comparator.comparing(PlantDTO::getUpdatedAt);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid sort field");
+            }
+
+            if ("desc".equalsIgnoreCase(sortDirection)) {
+                comparator = comparator.reversed();
+            }
+
+            filteredPlants.sort(comparator);
         }
 
         int total = filteredPlants.size();
