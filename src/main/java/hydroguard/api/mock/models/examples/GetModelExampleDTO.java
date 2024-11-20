@@ -10,7 +10,8 @@ public class GetModelExampleDTO {
     private String name;
 
     // Constructors
-    public GetModelExampleDTO() {}
+    public GetModelExampleDTO() {
+    }
 
     public GetModelExampleDTO(UUID id, String name) {
         this.id = id;

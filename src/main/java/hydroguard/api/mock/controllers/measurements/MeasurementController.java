@@ -2,9 +2,7 @@ package hydroguard.api.mock.controllers.measurements;
 
 import hydroguard.api.mock.models.measurements.MeasurementDTO;
 import hydroguard.api.mock.models.measurements.MeasurementsDTO;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
