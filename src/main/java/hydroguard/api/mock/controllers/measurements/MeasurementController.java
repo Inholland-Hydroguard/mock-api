@@ -31,12 +31,6 @@ public class MeasurementController {
             throw new IllegalArgumentException("Page size must be between 1 and 100");
         }
 
-        // Simulate sensor existence check
-        boolean sensorExists = checkSensorExists(sensorId);
-        if (!sensorExists) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sensor not found");
-        }
-
         List<MeasurementDTO> measurements = new ArrayList<>();
         measurements.add(new MeasurementDTO(sensorId));
         measurements.add(new MeasurementDTO(sensorId));
@@ -61,11 +55,5 @@ public class MeasurementController {
         List<MeasurementDTO> paginatedMeasurements = measurements.subList(start, end);
 
         return new MeasurementsDTO(paginatedMeasurements, total, page);
-    }
-
-    private boolean checkSensorExists(UUID sensorId) {
-        // Implement the logic to check if the sensor exists
-        // For now, let's assume all sensors exist
-        return true;
     }
 }
