@@ -3,6 +3,7 @@ package hydroguard.api.mock.models.community;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,12 +15,12 @@ public class CommentDTO {
     private String content;
     private int likes;
     private int dislikes;
-    private List<String> reactions; // String representation of reactions
+    private List<CommentDTO> reactions; // String representation of reactions
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime createdAt;
 
     public CommentDTO(UUID id, UUID userId, UUID parentId, String userName, String content, int likes, int dislikes,
-                      List<String> reactions, LocalDateTime createdAt) {
+                        List<CommentDTO> reactions, LocalDateTime createdAt) {
         this.id = id;
         this.userId = userId;
         this.parentId = parentId;
@@ -27,6 +28,19 @@ public class CommentDTO {
         this.content = content;
         this.likes = likes;
         this.dislikes = dislikes;
+        this.reactions = reactions;
+        this.createdAt = createdAt;
+    }
+
+    public CommentDTO(String userName, String content, int likes, int dislikes, LocalDateTime createdAt) {
+        this.id = UUID.randomUUID();
+        this.userId = UUID.randomUUID();
+        this.parentId = UUID.randomUUID();
+        this.userName = userName;
+        this.content = content;
+        this.likes = likes;
+        this.dislikes = dislikes;
+        List<CommentDTO> reactions = new ArrayList<>();
         this.reactions = reactions;
         this.createdAt = createdAt;
     }
@@ -92,11 +106,11 @@ public class CommentDTO {
         this.dislikes = dislikes;
     }
 
-    public List<String> getReactions() {
+    public List<CommentDTO> getReactions() {
         return reactions;
     }
 
-    public void setReactions(List<String> reactions) {
+    public void setReactions(List<CommentDTO> reactions) {
         this.reactions = reactions;
     }
 

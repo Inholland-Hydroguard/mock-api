@@ -3,6 +3,7 @@ package hydroguard.api.mock.models.community;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +25,16 @@ public class GroupDTO {
         this.description = description;
         this.groupOwner = groupOwner;
         this.posts = posts;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public GroupDTO(String groupName, String description, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = UUID.randomUUID();
+        this.groupName = groupName;
+        this.description = description;
+        this.groupOwner = UUID.randomUUID();
+        this.posts = new ArrayList<>();
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
