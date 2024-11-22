@@ -49,10 +49,7 @@ public class CommentController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(required = false) String userName,
-            @RequestParam(required = false) LocalDateTime createdFrom,
-            @RequestParam(required = false) LocalDateTime createdTo,
-            @RequestParam(required = false) LocalDateTime updatedFrom,
-            @RequestParam(required = false) LocalDateTime updatedTo,
+            @RequestParam(required = false) UUID parentId,
             @RequestParam(required = false) String sortField,
             @RequestParam(defaultValue = "asc") String sortDirection) {
 
@@ -62,10 +59,7 @@ public class CommentController {
 
         List<CommentDTO> filteredComments = comments.stream()
                 .filter(comment -> userName == null || comment.getUserName().equals(userName))
-                .filter(comment -> createdFrom == null || comment.getCreatedAt().isAfter(createdFrom))
-                .filter(comment -> createdTo == null || comment.getCreatedAt().isBefore(createdTo))
-                .filter(comment -> updatedFrom == null || comment.getCreatedAt().isAfter(updatedFrom))
-                .filter(comment -> updatedTo == null || comment.getCreatedAt().isBefore(updatedTo))
+                .filter(comment -> parentId == null || comment.getParentId().equals(parentId))
                 .collect(Collectors.toList());
 
         Comparator<CommentDTO> comparator = Comparator.comparing(CommentDTO::getCreatedAt);
