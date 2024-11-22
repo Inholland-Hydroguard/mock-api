@@ -59,10 +59,11 @@ public class PostController {
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "10") int pageSize,
         @RequestParam(required = false) String title,
+        @RequestParam(required = false) UUID userId,
         @RequestParam(required = false) String content,
-        @RequestParam(required = false) String groupName,
-        @RequestParam(required = false) LocalDateTime createdFrom,
-        @RequestParam(required = false) LocalDateTime createdTo,
+        @RequestParam(required = false) UUID groupId,
+        @RequestParam(required = false) LocalDateTime fromDate,
+        @RequestParam(required = false) LocalDateTime toDate,
         @RequestParam(required = false) String sortField,
         @RequestParam(defaultValue = "asc") String sortDirection) {
         
@@ -72,10 +73,11 @@ public class PostController {
 
         List<PostDTO> filteredPosts = posts.stream()
             .filter(post -> title == null || post.getTitle().contains(title))
+            .filter(post -> userId == null || post.getUserId().equals(userId))
             .filter(post -> content == null || post.getContent().contains(content))
-            .filter(post -> groupName == null || post.getGroupName().contains(groupName))
-            .filter(post -> createdFrom == null || post.getCreatedAt().isAfter(createdFrom))
-            .filter(post -> createdTo == null || post.getCreatedAt().isBefore(createdTo))
+            .filter(post -> groupId == null || post.getGroupId().equals(groupId))
+            .filter(post -> fromDate == null || post.getCreatedAt().isAfter(fromDate))
+            .filter(post -> toDate == null || post.getCreatedAt().isBefore(toDate))
             .collect(Collectors.toList());
 
         Comparator<PostDTO> comparator = Comparator.comparing(PostDTO::getTitle);

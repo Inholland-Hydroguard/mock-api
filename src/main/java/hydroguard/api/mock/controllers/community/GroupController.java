@@ -57,10 +57,9 @@ public class GroupController {
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "10") int pageSize,
         @RequestParam(required = false) String groupName,
-        @RequestParam(required = false) LocalDateTime createdFrom,
-        @RequestParam(required = false) LocalDateTime createdTo,
-        @RequestParam(required = false) LocalDateTime updatedFrom,
-        @RequestParam(required = false) LocalDateTime updatedTo,
+        @RequestParam(required = false) UUID groupOwner,
+        @RequestParam(required = false) LocalDateTime fromDate,
+        @RequestParam(required = false) LocalDateTime toDate,
         @RequestParam(required = false) String sortField,
         @RequestParam(defaultValue = "asc") String sortDirection) {
         
@@ -70,10 +69,9 @@ public class GroupController {
 
         List<GroupDTO> filteredGroups = Groups.stream()
             .filter(group -> groupName == null || group.getGroupName().contains(groupName))
-            .filter(group -> createdFrom == null || group.getCreatedAt().isAfter(createdFrom))
-            .filter(group -> createdTo == null || group.getCreatedAt().isBefore(createdTo))
-            .filter(group -> updatedFrom == null || group.getUpdatedAt().isAfter(updatedFrom))
-            .filter(group -> updatedTo == null || group.getUpdatedAt().isBefore(updatedTo))
+            .filter(group -> groupOwner == null || group.getGroupOwner().equals(groupOwner))
+            .filter(group -> fromDate == null || group.getCreatedAt().isAfter(fromDate))
+            .filter(group -> toDate == null || group.getCreatedAt().isBefore(toDate))
             .collect(Collectors.toList());
         
         Comparator<GroupDTO> comparator = Comparator.comparing(GroupDTO::getGroupName);
