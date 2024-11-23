@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public class PlantDTO {
     private UUID id;
+    private UUID householdId;
     private String name;
     private String species;
     private String description;
@@ -18,6 +19,7 @@ public class PlantDTO {
 
     public PlantDTO(UUID id, String name, String species, String description, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
+        this.householdId = UUID.randomUUID();
         this.name = name;
         this.species = species;
         this.description = description;
@@ -27,6 +29,7 @@ public class PlantDTO {
 
     public PlantDTO(UUID id) {
         this.id = id;
+        this.householdId = UUID.randomUUID();
         String[] names = {"Yellow Vine", "Blue Poppy", "Red Rose", "Green Leaf", "Purple Orchid", "White Lily", "Black Tulip", "Orange Daisy", "Pink Carnation", "Brown Sunflower"};
         Random random = new Random();
         this.name = names[random.nextInt(names.length)];
@@ -39,6 +42,7 @@ public class PlantDTO {
 
     public PlantDTO() {
         this.id = UUID.randomUUID();
+        this.householdId = UUID.randomUUID();
         String[] names = {"Yellow Vine", "Blue Poppy", "Red Rose", "Green Leaf", "Purple Orchid", "White Lily", "Black Tulip", "Orange Daisy", "Pink Carnation", "Brown Sunflower"};
         Random random = new Random();
         this.name = names[random.nextInt(names.length)];
@@ -62,6 +66,14 @@ public class PlantDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public UUID getHouseholdId() {
+        return householdId;
+    }
+
+    public void setHouseholdId(UUID householdId) {
+        this.householdId = householdId;
     }
 
     public String getSpecies() {
