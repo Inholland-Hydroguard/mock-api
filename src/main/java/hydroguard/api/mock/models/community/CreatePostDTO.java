@@ -1,6 +1,5 @@
 package hydroguard.api.mock.models.community;
 
-import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
