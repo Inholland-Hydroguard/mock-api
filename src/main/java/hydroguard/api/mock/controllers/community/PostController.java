@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import hydroguard.api.mock.models.community.CreatePostDTO;
 import hydroguard.api.mock.models.community.PostDTO;
 import hydroguard.api.mock.models.community.PostsDTO;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -34,10 +35,10 @@ public class PostController {
     @PostConstruct
     public void init() {
         //String title, String content, String groupName, String imageUrl, LocalDateTime createdAt, LocalDateTime updatedAt
-        posts.add(new PostDTO("OMG I love this plant", "Look at this cool plant i came across.", "PlantLovers", "https://media-cache-ak0.pinimg.com/736x/a8/d7/06/a8d706c596f31c0c5d2776c634abba67.jpg", getRandomDate(), getRandomDate()));
-        posts.add(new PostDTO("Water your plants!!!", "Don't forget to water your plants", "General Care", "https://media-cache-ak0.pinimg.com/736x/a8/d7/06/a8d706c596f31c0c5d2776c634abba67.jpg", getRandomDate(), getRandomDate()));
-        posts.add(new PostDTO("Don't forget to turn your pots", "Turning your pots can help keep your plants healthy.", "General Care", "https://media-cache-ak0.pinimg.com/736x/a8/d7/06/a8d706c596f31c0c5d2776c634abba67.jpg", getRandomDate(), getRandomDate()));
-        posts.add(new PostDTO("Water Cactus", "Look at this cactus that loves to drink water.", "CactiLovers", "https://media-cache-ak0.pinimg.com/736x/a8/d7/06/a8d706c596f31c0c5d2776c634abba67.jpg", getRandomDate(), getRandomDate()));
+        posts.add(new PostDTO("OMG I love this plant", "Look at this cool plant i came across.", "https://media-cache-ak0.pinimg.com/736x/a8/d7/06/a8d706c596f31c0c5d2776c634abba67.jpg", getRandomDate(), getRandomDate()));
+        posts.add(new PostDTO("Water your plants!!!", "Don't forget to water your plants", "https://media-cache-ak0.pinimg.com/736x/a8/d7/06/a8d706c596f31c0c5d2776c634abba67.jpg", getRandomDate(), getRandomDate()));
+        posts.add(new PostDTO("Don't forget to turn your pots", "Turning your pots can help keep your plants healthy.", "https://media-cache-ak0.pinimg.com/736x/a8/d7/06/a8d706c596f31c0c5d2776c634abba67.jpg", getRandomDate(), getRandomDate()));
+        posts.add(new PostDTO("Water Cactus", "Look at this cactus that loves to drink water.", "https://media-cache-ak0.pinimg.com/736x/a8/d7/06/a8d706c596f31c0c5d2776c634abba67.jpg", getRandomDate(), getRandomDate()));
     }
 
     private LocalDateTime getRandomDate() {
@@ -47,11 +48,18 @@ public class PostController {
         return LocalDateTime.ofEpochSecond(randomEpochSecond, 0, ZoneOffset.UTC);
     }
 
-    @PostMapping
-    public PostDTO createPost(@RequestBody PostDTO postDTO) {
+    @PostMapping(consumes = "multipart/form-data")
+    public PostDTO createPost(@RequestBody CreatePostDTO postDTO) {
         postDTO.setId(UUID.randomUUID());
-        posts.add(postDTO);
-        return postDTO;
+        PostDTO newPost = new PostDTO(
+            postDTO.getTitle(),
+            postDTO.getContent(),
+            "https://media-cache-ak0.pinimg.com/736x/a8/d7/06/a8d706c596f31c0c5d2776c634abba67.jpg",
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        );
+        posts.add(newPost);
+        return newPost;
     }
 
     @GetMapping
