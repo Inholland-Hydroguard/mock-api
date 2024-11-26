@@ -12,6 +12,7 @@ public class PlantDTO {
     private String name;
     private String species;
     private String description;
+    private String imageUrl;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime createdAt;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -23,6 +24,7 @@ public class PlantDTO {
         this.name = name;
         this.species = species;
         this.description = description;
+        this.imageUrl = "https://i.pinimg.com/736x/a8/d7/06/a8d706c596f31c0c5d2776c634abba67.jpg";
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -35,6 +37,7 @@ public class PlantDTO {
         this.name = names[random.nextInt(names.length)];
         this.species = "Plantae";
         this.description = "A plant";
+        this.imageUrl = "https://i.pinimg.com/736x/a8/d7/06/a8d706c596f31c0c5d2776c634abba67.jpg";
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -48,6 +51,7 @@ public class PlantDTO {
         this.name = names[random.nextInt(names.length)];
         this.species = "Plantae";
         this.description = "A plant";
+        this.imageUrl = "https://i.pinimg.com/736x/a8/d7/06/a8d706c596f31c0c5d2776c634abba67.jpg";
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -102,6 +106,14 @@ public class PlantDTO {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public void setUpdatedAt(LocalDateTime updatedAt) {

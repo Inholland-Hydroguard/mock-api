@@ -5,6 +5,7 @@ import hydroguard.api.mock.models.plants.PlantsDTO;
 import jakarta.annotation.PostConstruct;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -36,9 +37,16 @@ public class PlantController {
         return LocalDateTime.ofEpochSecond(randomEpochSecond, 0, ZoneOffset.UTC);
     }
 
-    @PostMapping
-    public PlantDTO createPlant(@RequestBody PlantDTO plantDTO) {
-        plantDTO.setId(UUID.randomUUID());
+    @PostMapping(consumes = "multipart/form-data")
+    public PlantDTO createPlant(
+            @RequestParam("name") String name,
+            @RequestParam("species") String species,
+            @RequestParam("description") String description,
+            @RequestParam("image") MultipartFile image) {
+
+        UUID id = UUID.randomUUID();
+
+        PlantDTO plantDTO = new PlantDTO(id, name, species, description, LocalDateTime.now(), LocalDateTime.now());
         plants.add(plantDTO);
         return plantDTO;
     }
