@@ -1,95 +1,115 @@
 package hydroguard.api.mock.controllers.friends;
 
 import hydroguard.api.mock.models.friends.AddFriendDTO;
-import hydroguard.api.mock.models.friends.Friends;
+import hydroguard.api.mock.models.friends.Friend;
+import hydroguard.api.mock.models.friends.FriendsDTO;
 import hydroguard.api.mock.models.friends.UpdateFriendStatusDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/*
+    Controller for the mock API. when
+ */
 @RestController
 @RequestMapping("/api/friends")
 public class FriendsController {
 
-    private final List<Friends> friendsList = new ArrayList<>();
+    // List that means created objects persist throughout a running application's lifetime
+    private final List<Friend> friendsList = new ArrayList<>();
+    private final String mockUserId = "00000000-0000-0000-0000-000000000000";
 
+    // Invite a friend
     @PostMapping("/invite")
     public ResponseEntity<String> inviteFriend(@RequestBody AddFriendDTO dto) {
-        Friends newFriendship = new Friends(dto.getUserId1(), dto.getUserId2());
+        Friend newFriendship = new Friend(mockUserId, dto.getFriendId());
         friendsList.add(newFriendship);
 
-        return ResponseEntity.ok("Friend invitation sent from " + dto.getUserId1() + " to " + dto.getUserId2());
+        return ResponseEntity.ok("Friend invitation sent from " + mockUserId + " to " + dto.getFriendId());
     }
 
+    // Accept a friend request
     @PostMapping("/invite/accept")
     public ResponseEntity<String> acceptInvitation(@RequestBody AddFriendDTO dto) {
-        for (Friends friendship : friendsList) {
-            if (friendship.getUserId1().equals(UUID.fromString(dto.getUserId1())) &&
-                    friendship.getUserId2().equals(UUID.fromString(dto.getUserId2())) &&
-                    friendship.getStatus() == Friends.Status.PENDING) {
+        for (Friend friendship : friendsList) {
+            if (friendship.getUserId1().equals(UUID.fromString(mockUserId)) &&
+                    friendship.getUserId2().equals(UUID.fromString(dto.getFriendId())) &&
+                    friendship.getStatus() == Friend.Status.PENDING) {
 
-                friendship.setStatus(Friends.Status.ACCEPTED);
-                return ResponseEntity.ok("Friendship accepted between " + dto.getUserId1() + " and " + dto.getUserId2());
+                friendship.setStatus(Friend.Status.ACCEPTED);
+                return ResponseEntity.ok("Friendship accepted between " + mockUserId + " and " + dto.getFriendId());
             }
-            if (friendship.getUserId2().equals(UUID.fromString(dto.getUserId1())) &&
-                    friendship.getUserId1().equals(UUID.fromString(dto.getUserId2())) &&
-                    friendship.getStatus() == Friends.Status.PENDING) {
+            if (friendship.getUserId2().equals(UUID.fromString(mockUserId)) &&
+                    friendship.getUserId1().equals(UUID.fromString(dto.getFriendId())) &&
+                    friendship.getStatus() == Friend.Status.PENDING) {
 
-                friendship.setStatus(Friends.Status.ACCEPTED);
-                return ResponseEntity.ok("Friendship accepted between " + dto.getUserId1() + " and " + dto.getUserId2());
+                friendship.setStatus(Friend.Status.ACCEPTED);
+                return ResponseEntity.ok("Friendship accepted between " + mockUserId + " and " + dto.getFriendId());
+            }
+        }
+        return ResponseEntity.status(404).body("No Pending invitation found.");
+    }
+
+    // Deny a friend request
+    @PostMapping("/invite/deny")
+    public ResponseEntity<String> denyInvitation(@RequestBody AddFriendDTO dto) {
+        for (Friend friendship : friendsList) {
+            if (friendship.getUserId1().equals(UUID.fromString(mockUserId)) &&
+                    friendship.getUserId2().equals(UUID.fromString(dto.getFriendId())) &&
+                    friendship.getStatus() == Friend.Status.PENDING) {
+
+                friendship.setStatus(Friend.Status.DENIED);
+                return ResponseEntity.ok("Friendship denied between " + mockUserId + " and " + dto.getFriendId());
+            }
+            if (friendship.getUserId2().equals(UUID.fromString(mockUserId)) &&
+                    friendship.getUserId1().equals(UUID.fromString(dto.getFriendId())) &&
+                    friendship.getStatus() == Friend.Status.PENDING) {
+
+                friendship.setStatus(Friend.Status.DENIED);
+                return ResponseEntity.ok("Friendship denied between " + mockUserId + " and " + dto.getFriendId());
             }
         }
         return ResponseEntity.status(404).body("Friend invitation not found.");
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateFriendshipStatus(@PathVariable UUID id, @RequestBody UpdateFriendStatusDTO dto) {
-        if (dto.getUserId1().equals(id.toString()) || dto.getUserId2().equals(id.toString())) {
-            for (Friends friendship : friendsList) {
-                if ((friendship.getUserId1().toString().equals(dto.getUserId1()) && friendship.getUserId2().toString().equals(dto.getUserId2())) ||
-                        (friendship.getUserId2().toString().equals(dto.getUserId1()) && friendship.getUserId1().toString().equals(dto.getUserId2()))) {
-                    friendship.setStatus(dto.getStatus());
-                    return ResponseEntity.ok("Friendship status updated to " + dto.getStatus());
-                }
+    // Method for adjusting a friendship status, this method is used for blocking, unblocking and removing
+    @PutMapping
+    public ResponseEntity<String> updateFriendshipStatus(UpdateFriendStatusDTO dto) {
+        for (Friend friendship : friendsList) {
+            if ((friendship.getUserId1().toString().equals(mockUserId) && friendship.getUserId2().toString().equals(dto.getFriendId())) ||
+                    (friendship.getUserId2().toString().equals(mockUserId) && friendship.getUserId1().toString().equals(dto.getFriendId()))) {
+                friendship.setStatus(dto.getStatus());
+                return ResponseEntity.ok("Friendship status updated to " + dto.getStatus());
             }
-            return ResponseEntity.status(404).body("Friendship not found.");
         }
-        return ResponseEntity.status(400).body("The ID supplied in the path is not in the DTO");
+        return ResponseEntity.status(404).body("Friendship not found.");
     }
 
+    // Get all friends of the user
     @GetMapping
-    public ResponseEntity<List<Friends>> getAllFriends(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        List<Friends> paginatedList = paginateList(friendsList, page, size);
-        return ResponseEntity.ok(paginatedList);
-    }
+    public ResponseEntity<?> getAllFriends(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int pageSize) {
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<Friends>> getFriendsByUserId(
-            @PathVariable UUID userId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        List<Friends> userFriends = friendsList.stream()
-                .filter(f -> f.getUserId1().equals(userId) || f.getUserId2().equals(userId))
-                .collect(Collectors.toList());
-
-        List<Friends> paginatedList = paginateList(userFriends, page, size);
-        return ResponseEntity.ok(paginatedList);
-    }
-
-    // Utility method for pagination
-    private List<Friends> paginateList(List<Friends> list, int page, int size) {
-        int fromIndex = page * size;
-        int toIndex = Math.min(fromIndex + size, list.size());
-
-        if (fromIndex > list.size()) {
-            return new ArrayList<>();
+        if (page < 1) {
+            return ResponseEntity.status(400).body("Page must be 1 or greater");
         }
-        return list.subList(fromIndex, toIndex);
+
+        // Pagination logic
+        int total = friendsList.size();
+        int fromIndex = (page - 1) * pageSize;
+        int toIndex = Math.min(fromIndex + pageSize, total);
+
+        if (fromIndex > total) {
+            return ResponseEntity.status(404).body("Page not found");
+        }
+
+        return ResponseEntity.ok(new FriendsDTO(friendsList.subList(fromIndex, toIndex), total, page));
     }
+
 }

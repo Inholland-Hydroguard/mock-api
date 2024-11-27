@@ -7,12 +7,12 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
-public class Friends {
+public class Friend {
     private UUID userId1;
     private UUID userId2;
     private Status status;
 
-    public Friends(String userId1, String userId2) {
+    public Friend(String userId1, String userId2) {
         this.userId1 = UUID.fromString(userId1);
         this.userId2 = UUID.fromString(userId2);
         this.status = Status.PENDING;
@@ -21,8 +21,8 @@ public class Friends {
     public enum Status {
         PENDING,
         ACCEPTED,
-        DENIED,
         BLOCKED,
+        DENIED,
         REMOVED;
 
         public static Status findByName(String name) {
@@ -32,6 +32,10 @@ public class Friends {
                 }
             }
             return null;
+        }
+
+        public static String toString(Status status) {
+            return status == null ? null : status.name();
         }
     }
 }
