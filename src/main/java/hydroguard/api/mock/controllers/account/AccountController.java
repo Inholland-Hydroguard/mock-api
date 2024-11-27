@@ -101,15 +101,6 @@ public class AccountController {
         return new AccountsDTO(paginatedAccounts, total, page);
     }
 
-    @PostMapping
-    public ResponseEntity<AccountDTO> createAccount(@RequestBody AccountDTO account) {
-        account.setId(UUID.randomUUID());
-        account.setCreatedAt(LocalDateTime.now());
-        account.setUpdatedAt(LocalDateTime.now());
-        accounts.add(account);
-        return ResponseEntity.status(HttpStatus.CREATED).body(account);
-    }
-
     @GetMapping("/{accountId}")
     public ResponseEntity<AccountDTO> getAccountById(@PathVariable UUID accountId) {
         AccountDTO account = accounts.stream()

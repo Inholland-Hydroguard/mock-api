@@ -10,23 +10,19 @@ public class AccountDTO {
     private String email;
     private int streaks;
     private String avatarUrl;
-    private int phoneNumber;
+    private String phoneNumber;
     private boolean publicProfile;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public AccountDTO(UUID id, String name, String username, String email, int streaks, String avatarUrl, int phoneNumber, boolean publicProfile, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public AccountDTO(UUID id, String username, String avatarUrl, String email) {
         this.id = id;
-        this.name = name;
         this.username = username;
-        this.email = email;
-        this.streaks = streaks;
         this.avatarUrl = avatarUrl;
-        this.phoneNumber = phoneNumber;
-        this.publicProfile = publicProfile;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.email = email;
     }
+
+    // Getters and setters for all fields
 
     public UUID getId() {
         return id;
@@ -76,11 +72,11 @@ public class AccountDTO {
         this.avatarUrl = avatarUrl;
     }
 
-    public int getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(int phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 

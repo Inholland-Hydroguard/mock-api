@@ -14,7 +14,7 @@ public class ReoccurringTaskDTO {
     private LocalDateTime updatedAt;
     private int intervalSeconds;
 
-    public ReoccurringTaskDTO(UUID taskId, UUID uuid, UUID uuid1, String sampleReoccurringTask, boolean b, LocalDateTime now, LocalDateTime now1, LocalDateTime now2) {
+    public ReoccurringTaskDTO(UUID taskId, UUID uuid, UUID uuid1, String sampleReoccurringTask, boolean b, LocalDateTime now, LocalDateTime now1, LocalDateTime now2, int intervalSeconds) {
         this.id = taskId;
         this.userId = uuid;
         this.plantId = uuid1;
@@ -23,6 +23,7 @@ public class ReoccurringTaskDTO {
         this.dueAt = now;
         this.createdAt = now1;
         this.updatedAt = now2;
+        this.intervalSeconds = intervalSeconds;
     }
 
     public UUID getId() {
@@ -87,6 +88,14 @@ public class ReoccurringTaskDTO {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public int getIntervalSeconds() {
+        return intervalSeconds;
+    }
+
+    public void setIntervalSeconds(int intervalSeconds) {
+        this.intervalSeconds = intervalSeconds;
     }
 
 }
