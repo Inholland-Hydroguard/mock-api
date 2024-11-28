@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 
 @RestController
-@RequestMapping("/tasks")
+@RequestMapping("api/tasks")
 public class TaskController {
 
     private final List<TaskDTO> tasks = new ArrayList<>();

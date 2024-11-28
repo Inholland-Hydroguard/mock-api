@@ -13,7 +13,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/reoccurring-tasks")
+@RequestMapping("api/reoccurring-tasks")
 public class ReoccurringTaskController {
 
     private final List<ReoccurringTaskDTO> reoccurringTasks = new ArrayList<>();
