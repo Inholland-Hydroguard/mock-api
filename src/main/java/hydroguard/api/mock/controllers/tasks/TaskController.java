@@ -2,11 +2,13 @@ package hydroguard.api.mock.controllers.tasks;
 
 import hydroguard.api.mock.models.task.TaskDTO;
 import hydroguard.api.mock.models.task.TasksDTO;
+import jakarta.annotation.PostConstruct;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -18,12 +20,36 @@ public class TaskController {
 
     private final List<TaskDTO> tasks = new ArrayList<>();
 
+    @PostConstruct
+    public void init() {
+        tasks.add(new TaskDTO(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "Task 1", false, LocalDateTime.now().plusDays(1), LocalDateTime.now(), LocalDateTime.now()));
+        tasks.add(new TaskDTO(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "Task 2", false, LocalDateTime.now().plusDays(2), LocalDateTime.now(), LocalDateTime.now()));
+        tasks.add(new TaskDTO(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "Task 3", false, LocalDateTime.now().plusDays(3), LocalDateTime.now(), LocalDateTime.now()));
+    }
+
     @GetMapping
     public TasksDTO getAllTasks(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(required = false) UUID userId,
-            @RequestParam(required = false) UUID plantId) {
+            @RequestParam(required = false) UUID plantId,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) Boolean isCompleted,
+            @RequestParam(required = false) LocalDateTime dueFrom,
+            @RequestParam(required = false) LocalDateTime dueTo,
+            @RequestParam(required = false) LocalDateTime createdFrom,
+            @RequestParam(required = false) LocalDateTime createdTo,
+            @RequestParam(required = false) LocalDateTime updatedFrom,
+            @RequestParam(required = false) LocalDateTime updatedTo,
+            @RequestParam(required = false) String sortField,
+            @RequestParam(defaultValue = "asc") String sortDirection) {
+
+        if (page < 1) {
+            throw new IllegalArgumentException("Page number must be greater than or equal to 1");
+        }
+        if (pageSize < 1 || pageSize > 100) {
+            throw new IllegalArgumentException("Page size must be between 1 and 100");
+        }
 
         List<TaskDTO> filteredTasks = tasks;
 
@@ -37,6 +63,89 @@ public class TaskController {
             filteredTasks = filteredTasks.stream()
                     .filter(task -> task.getPlantId().equals(plantId))
                     .collect(Collectors.toList());
+        }
+
+        if (description != null && !description.isEmpty()) {
+            filteredTasks = filteredTasks.stream()
+                    .filter(task -> task.getDescription().contains(description))
+                    .collect(Collectors.toList());
+        }
+
+        if (isCompleted != null) {
+            filteredTasks = filteredTasks.stream()
+                    .filter(task -> task.isCompleted() == isCompleted)
+                    .collect(Collectors.toList());
+        }
+
+        if (dueFrom != null) {
+            filteredTasks = filteredTasks.stream()
+                    .filter(task -> !task.getDueAt().isBefore(dueFrom))
+                    .collect(Collectors.toList());
+        }
+
+        if (dueTo != null) {
+            filteredTasks = filteredTasks.stream()
+                    .filter(task -> !task.getDueAt().isAfter(dueTo))
+                    .collect(Collectors.toList());
+        }
+
+        if (createdFrom != null) {
+            filteredTasks = filteredTasks.stream()
+                    .filter(task -> !task.getCreatedAt().isBefore(createdFrom))
+                    .collect(Collectors.toList());
+        }
+
+        if (createdTo != null) {
+            filteredTasks = filteredTasks.stream()
+                    .filter(task -> !task.getCreatedAt().isAfter(createdTo))
+                    .collect(Collectors.toList());
+        }
+
+        if (updatedFrom != null) {
+            filteredTasks = filteredTasks.stream()
+                    .filter(task -> !task.getUpdatedAt().isBefore(updatedFrom))
+                    .collect(Collectors.toList());
+        }
+
+        if (updatedTo != null) {
+            filteredTasks = filteredTasks.stream()
+                    .filter(task -> !task.getUpdatedAt().isAfter(updatedTo))
+                    .collect(Collectors.toList());
+        }
+
+        if (sortField != null) {
+            Comparator<TaskDTO> comparator;
+            switch (sortField) {
+                case "userId":
+                    comparator = Comparator.comparing(TaskDTO::getUserId);
+                    break;
+                case "plantId":
+                    comparator = Comparator.comparing(TaskDTO::getPlantId);
+                    break;
+                case "description":
+                    comparator = Comparator.comparing(TaskDTO::getDescription);
+                    break;
+                case "isCompleted":
+                    comparator = Comparator.comparing(TaskDTO::isCompleted);
+                    break;
+                case "dueAt":
+                    comparator = Comparator.comparing(TaskDTO::getDueAt);
+                    break;
+                case "createdAt":
+                    comparator = Comparator.comparing(TaskDTO::getCreatedAt);
+                    break;
+                case "updatedAt":
+                    comparator = Comparator.comparing(TaskDTO::getUpdatedAt);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid sort field");
+            }
+
+            if ("desc".equalsIgnoreCase(sortDirection)) {
+                comparator = comparator.reversed();
+            }
+
+            filteredTasks.sort(comparator);
         }
 
         int total = filteredTasks.size();

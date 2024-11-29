@@ -8,18 +8,18 @@ public class ReoccurringTaskDTO {
     private UUID userId;
     private UUID plantId;
     private String description;
-    private boolean completed;
+    private boolean isCompleted;
     private LocalDateTime dueAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private int intervalSeconds;
 
-    public ReoccurringTaskDTO(UUID taskId, UUID uuid, UUID uuid1, String sampleReoccurringTask, boolean b, LocalDateTime now, LocalDateTime now1, LocalDateTime now2, int intervalSeconds) {
+    public ReoccurringTaskDTO(UUID taskId, UUID uuid, UUID uuid1, String sampleReoccurringTask, boolean isCompleted, LocalDateTime now, LocalDateTime now1, LocalDateTime now2, int intervalSeconds) {
         this.id = taskId;
         this.userId = uuid;
         this.plantId = uuid1;
         this.description = sampleReoccurringTask;
-        this.completed = b;
+        this.isCompleted = isCompleted;
         this.dueAt = now;
         this.createdAt = now1;
         this.updatedAt = now2;
@@ -59,11 +59,11 @@ public class ReoccurringTaskDTO {
     }
 
     public boolean isCompleted() {
-        return completed;
+        return isCompleted;
     }
 
     public void setCompleted(boolean completed) {
-        this.completed = completed;
+        this.isCompleted = completed;
     }
 
     public LocalDateTime getDueAt() {
