@@ -2,6 +2,9 @@ package hydroguard.api.mock.controllers.account;
 
 import hydroguard.api.mock.models.account.AccountDTO;
 import hydroguard.api.mock.models.account.AccountsDTO;
+import hydroguard.api.mock.models.account.MinimalAccountDTO;
+import hydroguard.api.mock.models.account.MinimalAccountsDTO;
+import jakarta.annotation.PostConstruct;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +21,17 @@ public class AccountController {
 
     private final List<AccountDTO> accounts = new ArrayList<>();
 
+    @PostConstruct
+    public void init() {
+        accounts.add(new AccountDTO(UUID.randomUUID(), "John Doe Alexander Johnson White Carper Jones", "johndoewithalongerusernamethanmost", "john.doe@example.com", 5, "https://robohash.org/8b70f91f5eae6ada462f8efbc9c40d17?set=set4&bgset=&size=400x400", "123-456-7890", true, LocalDateTime.now().minusDays(10), LocalDateTime.now().minusDays(1)));
+        accounts.add(new AccountDTO(UUID.randomUUID(), "Jane Smith", "j4n3sm1th", "jane.smith@example.com", 10, "https://robohash.org/a476485bc5d85adc20f23cbf5a02a684?set=set4&bgset=&size=400x400", "234-567-8901", false, LocalDateTime.now().minusDays(20), LocalDateTime.now().minusDays(2)));
+        accounts.add(new AccountDTO(UUID.randomUUID(), "Alice Johnson", "aj", "alice.johnson@example.com", 15, "https://robohash.org/398ca7969c2b1966070f6d4fff3509f0?set=set4&bgset=&size=400x400", "345-678-9012", true, LocalDateTime.now().minusDays(30), LocalDateTime.now().minusDays(3)));
+        accounts.add(new AccountDTO(UUID.randomUUID(), "Bob Brown", "bobb", "bob.brown@example.com", 20, "https://robohash.org/610b9cfb18e50d33e7fef6d56905b992?set=set4&bgset=&size=400x400", "456-789-0123", false, LocalDateTime.now().minusDays(40), LocalDateTime.now().minusDays(4)));
+        accounts.add(new AccountDTO(UUID.randomUUID(), "Charlie Davis", "charlied", "charlie.davis@example.com", 25, "https://robohash.org/3f7aaf88ccba1265747142e405d72b9c?set=set4&bgset=&size=400x400", "567-890-1234", true, LocalDateTime.now().minusDays(50), LocalDateTime.now().minusDays(5)));
+    }
+
     @GetMapping
-    public AccountsDTO getAllAccounts(
+    public MinimalAccountsDTO getAllAccounts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(required = false) String name,
@@ -96,9 +108,16 @@ public class AccountController {
         int start = (page - 1) * pageSize;
         int end = Math.min(start + pageSize, total);
 
-        List<AccountDTO> paginatedAccounts = filteredAccounts.subList(start, end);
+        List<MinimalAccountDTO> paginatedAccounts = filteredAccounts.subList(start, end).stream()
+                .map(account -> new MinimalAccountDTO(
+                        account.getId(),
+                        account.getName(),
+                        account.getUsername(),
+                        account.getAvatarUrl(),
+                        account.isPublicProfile()))
+                .collect(Collectors.toList());
 
-        return new AccountsDTO(paginatedAccounts, total, page);
+        return new MinimalAccountsDTO(paginatedAccounts, total, page);
     }
 
     @GetMapping("/{accountId}")

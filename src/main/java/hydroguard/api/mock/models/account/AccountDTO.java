@@ -22,7 +22,19 @@ public class AccountDTO {
         this.email = email;
     }
 
-    // Getters and setters for all fields
+    public AccountDTO(UUID id, String name, String username, String email, int streaks, String avatarUrl, String phoneNumber, boolean publicProfile, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.name = name;
+        this.username = username;
+        this.email = email;
+        this.streaks = streaks;
+        this.avatarUrl = avatarUrl;
+        this.phoneNumber = phoneNumber;
+        this.publicProfile = publicProfile;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+// Getters and setters for all fields
 
     public UUID getId() {
         return id;
