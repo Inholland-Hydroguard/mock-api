@@ -35,6 +35,9 @@ public class AccountController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(required = false) String name,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String avatarUrl,
+            @RequestParam(required = false) Boolean publicProfile,
             @RequestParam(required = false) LocalDateTime createdFrom,
             @RequestParam(required = false) LocalDateTime createdTo,
             @RequestParam(required = false) LocalDateTime updatedFrom,
@@ -54,6 +57,24 @@ public class AccountController {
         if (name != null && !name.isEmpty()) {
             filteredAccounts = filteredAccounts.stream()
                     .filter(account -> account.getName().contains(name))
+                    .collect(Collectors.toList());
+        }
+
+        if (username != null && !username.isEmpty()) {
+            filteredAccounts = filteredAccounts.stream()
+                    .filter(account -> account.getUsername().contains(username))
+                    .collect(Collectors.toList());
+        }
+
+        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+            filteredAccounts = filteredAccounts.stream()
+                    .filter(account -> account.getAvatarUrl().contains(avatarUrl))
+                    .collect(Collectors.toList());
+        }
+
+        if (publicProfile != null) {
+            filteredAccounts = filteredAccounts.stream()
+                    .filter(account -> account.isPublicProfile() == publicProfile)
                     .collect(Collectors.toList());
         }
 
@@ -86,6 +107,15 @@ public class AccountController {
             switch (sortField) {
                 case "name":
                     comparator = Comparator.comparing(AccountDTO::getName);
+                    break;
+                case "username":
+                    comparator = Comparator.comparing(AccountDTO::getUsername);
+                    break;
+                case "avatarUrl":
+                    comparator = Comparator.comparing(AccountDTO::getAvatarUrl);
+                    break;
+                case "publicProfile":
+                    comparator = Comparator.comparing(AccountDTO::isPublicProfile);
                     break;
                 case "createdAt":
                     comparator = Comparator.comparing(AccountDTO::getCreatedAt);

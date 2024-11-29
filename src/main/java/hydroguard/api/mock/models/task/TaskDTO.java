@@ -8,17 +8,17 @@ public class TaskDTO {
     private UUID userId;
     private UUID plantId;
     private String description;
-    private boolean completed;
+    private boolean isCompleted;
     private LocalDateTime dueAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public TaskDTO(UUID id, UUID userId, UUID plantId, String description, boolean completed, LocalDateTime dueAt, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public TaskDTO(UUID id, UUID userId, UUID plantId, String description, boolean isCompleted, LocalDateTime dueAt, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.userId = userId;
         this.plantId = plantId;
         this.description = description;
-        this.completed = completed;
+        this.isCompleted = isCompleted;
         this.dueAt = dueAt;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -57,11 +57,11 @@ public class TaskDTO {
     }
 
     public boolean isCompleted() {
-        return completed;
+        return isCompleted;
     }
 
     public void setCompleted(boolean completed) {
-        this.completed = completed;
+        this.isCompleted = completed;
     }
 
     public LocalDateTime getDueAt() {
