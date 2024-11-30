@@ -32,7 +32,6 @@ public class ReoccurringTaskController {
     public ReoccurringTasksDTO getAllReoccurringTasks(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(required = false) UUID userId,
             @RequestParam(required = false) UUID plantId,
             @RequestParam(required = false) String description,
             @RequestParam(required = false) Boolean isCompleted,
@@ -55,12 +54,6 @@ public class ReoccurringTaskController {
         }
 
         List<ReoccurringTaskDTO> filteredTasks = reoccurringTasks;
-
-        if (userId != null) {
-            filteredTasks = filteredTasks.stream()
-                    .filter(task -> task.getUserId().equals(userId))
-                    .collect(Collectors.toList());
-        }
 
         if (plantId != null) {
             filteredTasks = filteredTasks.stream()
@@ -131,9 +124,6 @@ public class ReoccurringTaskController {
         if (sortField != null) {
             Comparator<ReoccurringTaskDTO> comparator;
             switch (sortField) {
-                case "userId":
-                    comparator = Comparator.comparing(ReoccurringTaskDTO::getUserId);
-                    break;
                 case "plantId":
                     comparator = Comparator.comparing(ReoccurringTaskDTO::getPlantId);
                     break;

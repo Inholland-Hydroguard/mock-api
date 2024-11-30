@@ -26,12 +26,12 @@ public class HouseholdController {
     @PostConstruct
     public void init() {
         HouseholdDTO household1 = new HouseholdDTO(UUID.randomUUID(), "Household 1", "City 1");
-        household1.getMembers().add(new HouseholdUserDTO(UUID.randomUUID(), "user1", "avatar1.png", "Owner"));
+        household1.getMembers().add(new HouseholdUserDTO(UUID.fromString("0000000-0000-0000-0000-000000000000"), "Me", "avatar1.png", "Owner"));
         household1.getMembers().add(new HouseholdUserDTO(UUID.randomUUID(), "user2", "avatar2.png", "Member"));
 
         HouseholdDTO household2 = new HouseholdDTO(UUID.randomUUID(), "Household 2", "City 2");
-        household2.getMembers().add(new HouseholdUserDTO(UUID.randomUUID(), "user3", "avatar3.png", "Owner"));
-        household2.getMembers().add(new HouseholdUserDTO(UUID.randomUUID(), "user4", "avatar4.png", "Member"));
+        household2.getMembers().add(new HouseholdUserDTO(UUID.fromString("0000000-0000-0000-0000-000000000000"), "Me", "avatar3.png", "Member"));
+        household2.getMembers().add(new HouseholdUserDTO(UUID.randomUUID(), "user4", "avatar4.png", "Owner"));
 
         households.add(household1);
         households.add(household2);
@@ -110,6 +110,10 @@ public class HouseholdController {
         }
 
         List<HouseholdDTO> filteredHouseholds = households;
+
+        filteredHouseholds = filteredHouseholds.stream()
+                .filter(household -> household.getMembers().stream().anyMatch(user -> user.getUserId().equals(UUID.fromString("0000000-0000-0000-0000-000000000000"))))
+                .collect(Collectors.toList());
 
         if (name != null && !name.isEmpty()) {
             filteredHouseholds = filteredHouseholds.stream()

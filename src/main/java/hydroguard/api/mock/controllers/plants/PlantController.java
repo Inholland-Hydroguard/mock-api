@@ -57,6 +57,7 @@ public class PlantController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(required = false) String name,
+            @RequestParam(required = false) String householdId,
             @RequestParam(required = false) LocalDateTime createdFrom,
             @RequestParam(required = false) LocalDateTime createdTo,
             @RequestParam(required = false) LocalDateTime updatedFrom,
@@ -72,6 +73,12 @@ public class PlantController {
         }
 
         List<PlantDTO> filteredPlants = plants;
+
+        if (householdId != null && !householdId.isEmpty()) {
+            filteredPlants = filteredPlants.stream()
+                    .filter(plant -> plant.getHouseholdId().equals(UUID.fromString(householdId)))
+                    .collect(Collectors.toList());
+        }
 
         if (name != null && !name.isEmpty()) {
             filteredPlants = filteredPlants.stream()

@@ -22,9 +22,9 @@ public class TaskController {
 
     @PostConstruct
     public void init() {
-        tasks.add(new TaskDTO(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "Task 1", false, LocalDateTime.now().plusDays(1), LocalDateTime.now(), LocalDateTime.now()));
-        tasks.add(new TaskDTO(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "Task 2", false, LocalDateTime.now().plusDays(2), LocalDateTime.now(), LocalDateTime.now()));
-        tasks.add(new TaskDTO(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "Task 3", false, LocalDateTime.now().plusDays(3), LocalDateTime.now(), LocalDateTime.now()));
+        tasks.add(new TaskDTO(UUID.randomUUID(), UUID.fromString("0000000-0000-0000-0000-000000000000"), UUID.randomUUID(), "Task 1", false, LocalDateTime.now().plusDays(1), LocalDateTime.now(), LocalDateTime.now()));
+        tasks.add(new TaskDTO(UUID.randomUUID(), UUID.fromString("0000000-0000-0000-0000-000000000000"), UUID.randomUUID(), "Task 2", false, LocalDateTime.now().plusDays(2), LocalDateTime.now(), LocalDateTime.now()));
+        tasks.add(new TaskDTO(UUID.randomUUID(), UUID.fromString("0000000-0000-0000-0000-000000000000"), UUID.randomUUID(), "Task 3", false, LocalDateTime.now().plusDays(3), LocalDateTime.now(), LocalDateTime.now()));
     }
 
     @GetMapping
@@ -160,6 +160,7 @@ public class TaskController {
     @PostMapping
     public ResponseEntity<TaskDTO> createTask(@RequestBody TaskDTO task) {
         task.setId(UUID.randomUUID());
+        task.setUserId(UUID.fromString("0000000-0000-0000-0000-000000000000"));
         task.setCreatedAt(LocalDateTime.now());
         task.setUpdatedAt(LocalDateTime.now());
         tasks.add(task);

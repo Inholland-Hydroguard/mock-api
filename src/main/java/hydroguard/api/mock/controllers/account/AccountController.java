@@ -4,6 +4,7 @@ import hydroguard.api.mock.models.account.AccountDTO;
 import hydroguard.api.mock.models.account.AccountsDTO;
 import hydroguard.api.mock.models.account.MinimalAccountDTO;
 import hydroguard.api.mock.models.account.MinimalAccountsDTO;
+import hydroguard.api.mock.models.subscriptions.SubscriptionDTO;
 import jakarta.annotation.PostConstruct;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +24,11 @@ public class AccountController {
 
     @PostConstruct
     public void init() {
-        accounts.add(new AccountDTO(UUID.randomUUID(), "John Doe Alexander Johnson White Carper Jones", "johndoewithalongerusernamethanmost", "john.doe@example.com", 5, "https://robohash.org/8b70f91f5eae6ada462f8efbc9c40d17?set=set4&bgset=&size=400x400", "123-456-7890", true, LocalDateTime.now().minusDays(10), LocalDateTime.now().minusDays(1)));
-        accounts.add(new AccountDTO(UUID.randomUUID(), "Jane Smith", "j4n3sm1th", "jane.smith@example.com", 10, "https://robohash.org/a476485bc5d85adc20f23cbf5a02a684?set=set4&bgset=&size=400x400", "234-567-8901", false, LocalDateTime.now().minusDays(20), LocalDateTime.now().minusDays(2)));
-        accounts.add(new AccountDTO(UUID.randomUUID(), "Alice Johnson", "aj", "alice.johnson@example.com", 15, "https://robohash.org/398ca7969c2b1966070f6d4fff3509f0?set=set4&bgset=&size=400x400", "345-678-9012", true, LocalDateTime.now().minusDays(30), LocalDateTime.now().minusDays(3)));
-        accounts.add(new AccountDTO(UUID.randomUUID(), "Bob Brown", "bobb", "bob.brown@example.com", 20, "https://robohash.org/610b9cfb18e50d33e7fef6d56905b992?set=set4&bgset=&size=400x400", "456-789-0123", false, LocalDateTime.now().minusDays(40), LocalDateTime.now().minusDays(4)));
-        accounts.add(new AccountDTO(UUID.randomUUID(), "Charlie Davis", "charlied", "charlie.davis@example.com", 25, "https://robohash.org/3f7aaf88ccba1265747142e405d72b9c?set=set4&bgset=&size=400x400", "567-890-1234", true, LocalDateTime.now().minusDays(50), LocalDateTime.now().minusDays(5)));
+        accounts.add(new AccountDTO(UUID.fromString("0000000-0000-0000-0000-000000000000"), "John Doe Alexander Johnson White Carper Jones", "johndoewithalongerusernamethanmost", "john.doe@example.com", 501, "https://robohash.org/8b70f91f5eae6ada462f8efbc9c40d17?set=set4&bgset=&size=400x400", "06-XXXXXXXX", true, LocalDateTime.now().minusDays(10), LocalDateTime.now().minusDays(1)));
+        accounts.add(new AccountDTO(UUID.randomUUID(), "Jane Smith", "j4n3sm1th", "jane.smith@example.com", 10, "https://robohash.org/a476485bc5d85adc20f23cbf5a02a684?set=set4&bgset=&size=400x400", "06-XXXXXXXX", false, LocalDateTime.now().minusDays(20), LocalDateTime.now().minusDays(2)));
+        accounts.add(new AccountDTO(UUID.randomUUID(), "Alice Johnson", "aj", "alice.johnson@example.com", 15, "https://robohash.org/398ca7969c2b1966070f6d4fff3509f0?set=set4&bgset=&size=400x400", "06-XXXXXXXX", true, LocalDateTime.now().minusDays(30), LocalDateTime.now().minusDays(3)));
+        accounts.add(new AccountDTO(UUID.randomUUID(), "Bob Brown", "bobb", "bob.brown@example.com", 20, "https://robohash.org/610b9cfb18e50d33e7fef6d56905b992?set=set4&bgset=&size=400x400", "06-XXXXXXXX", false, LocalDateTime.now().minusDays(40), LocalDateTime.now().minusDays(4)));
+        accounts.add(new AccountDTO(UUID.randomUUID(), "Charlie Davis", "charlied", "charlie.davis@example.com", 25, "https://robohash.org/3f7aaf88ccba1265747142e405d72b9c?set=set4&bgset=&size=400x400", "06-XXXXXXXX", true, LocalDateTime.now().minusDays(50), LocalDateTime.now().minusDays(5)));
     }
 
     @GetMapping
@@ -37,7 +38,6 @@ public class AccountController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String username,
             @RequestParam(required = false) String avatarUrl,
-            @RequestParam(required = false) Boolean publicProfile,
             @RequestParam(required = false) LocalDateTime createdFrom,
             @RequestParam(required = false) LocalDateTime createdTo,
             @RequestParam(required = false) LocalDateTime updatedFrom,
@@ -54,6 +54,10 @@ public class AccountController {
 
         List<AccountDTO> filteredAccounts = accounts;
 
+        filteredAccounts = filteredAccounts.stream()
+                .filter(account -> account.isPublicProfile())
+                .collect(Collectors.toList());
+
         if (name != null && !name.isEmpty()) {
             filteredAccounts = filteredAccounts.stream()
                     .filter(account -> account.getName().contains(name))
@@ -69,12 +73,6 @@ public class AccountController {
         if (avatarUrl != null && !avatarUrl.isEmpty()) {
             filteredAccounts = filteredAccounts.stream()
                     .filter(account -> account.getAvatarUrl().contains(avatarUrl))
-                    .collect(Collectors.toList());
-        }
-
-        if (publicProfile != null) {
-            filteredAccounts = filteredAccounts.stream()
-                    .filter(account -> account.isPublicProfile() == publicProfile)
                     .collect(Collectors.toList());
         }
 
@@ -114,9 +112,6 @@ public class AccountController {
                 case "avatarUrl":
                     comparator = Comparator.comparing(AccountDTO::getAvatarUrl);
                     break;
-                case "publicProfile":
-                    comparator = Comparator.comparing(AccountDTO::isPublicProfile);
-                    break;
                 case "createdAt":
                     comparator = Comparator.comparing(AccountDTO::getCreatedAt);
                     break;
@@ -150,10 +145,10 @@ public class AccountController {
         return new MinimalAccountsDTO(paginatedAccounts, total, page);
     }
 
-    @GetMapping("/{accountId}")
-    public ResponseEntity<AccountDTO> getAccountById(@PathVariable UUID accountId) {
+    @GetMapping("/{id}")
+    public ResponseEntity<AccountDTO> getAccountById(@PathVariable UUID id) {
         AccountDTO account = accounts.stream()
-                .filter(a -> a.getId().equals(accountId))
+                .filter(a -> a.getId().equals(id))
                 .findFirst()
                 .orElse(null);
         if (account == null) {
@@ -162,10 +157,10 @@ public class AccountController {
         return ResponseEntity.ok(account);
     }
 
-    @PutMapping("/{accountId}")
-    public ResponseEntity<AccountDTO> updateAccount(@PathVariable UUID accountId, @RequestBody AccountDTO account) {
+    @PutMapping()
+    public ResponseEntity<AccountDTO> updateAccount(@RequestBody AccountDTO account) {
         AccountDTO existingAccount = accounts.stream()
-                .filter(a -> a.getId().equals(accountId))
+                .filter(a -> a.getId().equals(UUID.fromString("0000000-0000-0000-0000-000000000000")))
                 .findFirst()
                 .orElse(null);
         if (existingAccount == null) {
@@ -182,12 +177,40 @@ public class AccountController {
         return ResponseEntity.ok(existingAccount);
     }
 
-    @DeleteMapping("/{accountId}")
-    public ResponseEntity<Void> deleteAccount(@PathVariable UUID accountId) {
-        boolean removed = accounts.removeIf(account -> account.getId().equals(accountId));
+    @DeleteMapping()
+    public ResponseEntity<Void> deleteAccount() {
+        boolean removed = accounts.removeIf(account -> account.getId().equals(UUID.fromString("0000000-0000-0000-0000-000000000000")));
         if (!removed) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/subscription")
+    public ResponseEntity<AccountDTO> addSubscription(@RequestBody SubscriptionDTO subscription) {
+        AccountDTO account = accounts.stream()
+                .filter(a -> a.getId().equals(UUID.fromString("0000000-0000-0000-0000-000000000000")))
+                .findFirst()
+                .orElse(null);
+        if (account == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        account.setSubscription(subscription);
+        account.setUpdatedAt(LocalDateTime.now());
+        return ResponseEntity.ok(account);
+    }
+
+    @DeleteMapping("/subscription")
+    public ResponseEntity<Void> removeSubscription() {
+        AccountDTO account = accounts.stream()
+                .filter(a -> a.getId().equals(UUID.fromString("0000000-0000-0000-0000-000000000000")))
+                .findFirst()
+                .orElse(null);
+        if (account == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        account.setSubscription(null);
+        account.setUpdatedAt(LocalDateTime.now());
         return ResponseEntity.noContent().build();
     }
 }
