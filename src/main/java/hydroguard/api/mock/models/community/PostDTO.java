@@ -39,7 +39,7 @@ public class PostDTO {
         this.content = content;
         this.groupId = UUID.randomUUID();
         this.imageUrl = imageUrl;
-        this.userId = UUID.randomUUID();
+        this.userId = UUID.fromString("00000000-00000000-00000000-00000000");
         this.comments = new ArrayList<>();
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
