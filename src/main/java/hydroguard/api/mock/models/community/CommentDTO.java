@@ -34,7 +34,7 @@ public class CommentDTO {
 
     public CommentDTO(String userName, String content, int likes, int dislikes, LocalDateTime createdAt) {
         this.id = UUID.randomUUID();
-        this.userId = UUID.fromString("00000000-00000000-00000000-00000000");
+        this.userId = UUID.fromString("0000000-0000-0000-0000-000000000000");
         this.parentId = UUID.randomUUID();
         this.userName = userName;
         this.content = content;

@@ -1,7 +1,9 @@
 package hydroguard.api.mock.controllers.sensors;
 
 import hydroguard.api.mock.models.sensors.SensorDTO;
+import jakarta.annotation.PostConstruct;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +14,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/sensors")
 public class SensorController {
     private final List<SensorDTO> sensors = new ArrayList<>();
+
+    @PostConstruct
+    public void init() {
+        UUID userId = UUID.fromString("0000000-0000-0000-0000-000000000000");
+        sensors.add(new SensorDTO(UUID.randomUUID(), userId, UUID.randomUUID(), "1 Sensor", 10.0f, 30.0f, (byte) 100, true, true, LocalDateTime.now(), LocalDateTime.now()));
+        sensors.add(new SensorDTO(UUID.randomUUID(), userId, UUID.randomUUID(), "2 Sensor", 20.0f, 70.0f, (byte) 80, false, true, LocalDateTime.now(), LocalDateTime.now()));
+        sensors.add(new SensorDTO(UUID.randomUUID(), userId, UUID.randomUUID(), "3 Sensor", 100.0f, 1000.0f, (byte) 90, true, false, LocalDateTime.now(), LocalDateTime.now()));
+    }
 
     @GetMapping("/{id}")
     public SensorDTO getSensorById(@PathVariable UUID id) {

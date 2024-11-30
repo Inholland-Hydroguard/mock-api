@@ -24,7 +24,6 @@ public class CommentController {
 
     @PostConstruct
     public void init() {
-        //String userName, String content, int likes, int dislikes, LocalDateTime createdAt
         comments.add(new CommentDTO("PlantLover69", "How amazing that you did that!", 1, 0, getRandomDate()));
         comments.add(new CommentDTO("ILikePlants", "Wow, did you also know you can cut the big leaves so new leaves will grow.", 123, 55, getRandomDate()));
         comments.add(new CommentDTO("OrchidsWin", "I like orchids better", 23, 154, getRandomDate()));
