@@ -18,6 +18,17 @@ public class PlantDTO {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime updatedAt;
 
+    public PlantDTO(UUID id, UUID householdId, String name, String species, String description, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.householdId = householdId;
+        this.name = name;
+        this.species = species;
+        this.description = description;
+        this.imageUrl = "https://i.pinimg.com/736x/a8/d7/06/a8d706c596f31c0c5d2776c634abba67.jpg";
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
     public PlantDTO(UUID id, String name, String species, String description, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.householdId = UUID.randomUUID();
