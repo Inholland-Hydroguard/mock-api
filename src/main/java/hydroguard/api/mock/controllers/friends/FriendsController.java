@@ -92,12 +92,12 @@ public class FriendsController {
 
     // Get all friends of the user
     @GetMapping
-    public ResponseEntity<?> getAllFriends(
+    public ResponseEntity<FriendsDTO> getAllFriends(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int pageSize) {
 
         if (page < 1) {
-            return ResponseEntity.status(400).body("Page must be 1 or greater");
+            throw new IllegalArgumentException("Invalid page number");
         }
 
         // Pagination logic
@@ -106,7 +106,7 @@ public class FriendsController {
         int toIndex = Math.min(fromIndex + pageSize, total);
 
         if (fromIndex > total) {
-            return ResponseEntity.status(404).body("Page not found");
+            throw new IllegalArgumentException("Invalid page number higher than total number of pages");
         }
 
         return ResponseEntity.ok(new FriendsDTO(friendsList.subList(fromIndex, toIndex), total, page));
