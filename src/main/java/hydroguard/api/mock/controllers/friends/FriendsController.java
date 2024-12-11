@@ -79,12 +79,16 @@ public class FriendsController {
 
     // Method for adjusting a friendship status, this method is used for blocking, unblocking and removing
     @PutMapping
-    public ResponseEntity<String> updateFriendshipStatus(UpdateFriendStatusDTO dto) {
+    public ResponseEntity<String> updateFriendshipStatus(@RequestBody UpdateFriendStatusDTO dto) {
         for (Friend friendship : friendsList) {
-            if ((friendship.getUserId1().toString().equals(mockUserId) && friendship.getUserId2().toString().equals(dto.getFriendId())) ||
-                    (friendship.getUserId2().toString().equals(mockUserId) && friendship.getUserId1().toString().equals(dto.getFriendId()))) {
+            if (friendship.getUserId1().toString().equals(mockUserId) && friendship.getUserId2().toString().equals(dto.getFriendId())) {
                 friendship.setStatus(dto.getStatus());
                 return ResponseEntity.ok("Friendship status updated to " + dto.getStatus());
+            } else if (friendship.getUserId2().toString().equals(mockUserId) && friendship.getUserId1().toString().equals(dto.getFriendId())) {
+                friendship.setStatus(dto.getStatus());
+                return ResponseEntity.ok("Friendship status updated to " + dto.getStatus());
+            } else {
+                return ResponseEntity.status(404).body("Friendship not found.");
             }
         }
         return ResponseEntity.status(404).body("Friendship not found.");
