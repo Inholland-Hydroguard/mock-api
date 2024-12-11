@@ -87,8 +87,6 @@ public class FriendsController {
             } else if (friendship.getUserId2().toString().equals(mockUserId) && friendship.getUserId1().toString().equals(dto.getFriendId())) {
                 friendship.setStatus(dto.getStatus());
                 return ResponseEntity.ok("Friendship status updated to " + dto.getStatus());
-            } else {
-                return ResponseEntity.status(404).body("Friendship not found.");
             }
         }
         return ResponseEntity.status(404).body("Friendship not found.");
