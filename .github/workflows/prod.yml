@@ -14,11 +14,9 @@ env:
   OPENSHIFT_IMAGE_TAGS: ""
   OPENSHIFT_APP_PORT: ""
 
-#  registry things
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
   IMAGE_REGISTRY_USER: ${{ github.actor }}
   IMAGE_REGISTRY_PASSWORD: ${{ github.token }}
-
 
 on:
   push:
@@ -67,7 +65,7 @@ jobs:
             else {
               core.info(`✅ All the required secrets are set`);
             }
-            
+
             // Ensure the IMAGE_REGISTRY is lowercase
             const imageRegistry = `${{ env.IMAGE_REGISTRY }}`.toLowerCase();
             core.exportVariable('IMAGE_REGISTRY', imageRegistry);
@@ -79,20 +77,25 @@ jobs:
         if: env.OPENSHIFT_APP_NAME == ''
         run: |
           echo "OPENSHIFT_APP_NAME=$(basename $PWD)" | tee -a $GITHUB_ENV
-          
+
       - name: Determine image tags
         if: env.OPENSHIFT_IMAGE_TAGS == ''
         run: |
           echo "OPENSHIFT_IMAGE_TAGS=latest ${GITHUB_SHA::12}" | tee -a $GITHUB_ENV
 
-      # https://github.com/redhat-actions/buildah-build#readme
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build from Dockerfile
         id: build-image
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.OPENSHIFT_APP_NAME }}
           tags: ${{ env.OPENSHIFT_IMAGE_TAGS }}
-
           dockerfiles: |
             ./Dockerfile
             
@@ -121,21 +124,6 @@ jobs:
           insecure_skip_tls_verify: true
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Verify image existence
-        run: |
-          IMAGE_URL="ghcr.io/inholland-hydroguard/mock-api:latest"
-          if ! skopeo inspect docker://${IMAGE_URL}; then
-            echo "Image ${IMAGE_URL} does not exist in the registry."
-            exit 1
-          fi
-
       # This step should create a deployment, service, and route to run your app and expose it to the internet.
       # https://github.com/redhat-actions/oc-new-app#readme
       - name: Create and expose app
@@ -143,9 +131,10 @@ jobs:
         uses: redhat-actions/oc-new-app@v1
         with:
           app_name: ${{ env.OPENSHIFT_APP_NAME }}
-          image: ${{ steps.push-image.outputs.image }}
+          image: ${{ env.IMAGE_REGISTRY }}/${{ env.OPENSHIFT_APP_NAME }}:${{ env.OPENSHIFT_IMAGE_TAGS }}
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
           port: ${{ env.OPENSHIFT_APP_PORT }}
+          create_pull_secret_from: docker
 
       - name: Print application URL
         env:
