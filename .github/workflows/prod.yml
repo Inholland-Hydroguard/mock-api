@@ -121,6 +121,14 @@ jobs:
           insecure_skip_tls_verify: true
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
 
+      - name: Verify image existence
+        run: |
+          IMAGE_URL="ghcr.io/inholland-hydroguard/mock-api:latest"
+          if ! skopeo inspect docker://${IMAGE_URL}; then
+            echo "Image ${IMAGE_URL} does not exist in the registry."
+            exit 1
+          fi
+
       # This step should create a deployment, service, and route to run your app and expose it to the internet.
       # https://github.com/redhat-actions/oc-new-app#readme
       - name: Create and expose app
@@ -128,10 +136,9 @@ jobs:
         uses: redhat-actions/oc-new-app@v1
         with:
           app_name: ${{ env.OPENSHIFT_APP_NAME }}
-          image: ${{ env.IMAGE_REGISTRY }}/${{ steps.build-image.outputs.image }}:${{ steps.build-image.outputs.tags }}
+          image: ${{ steps.push-image.outputs.image }}
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
           port: ${{ env.OPENSHIFT_APP_PORT }}
-          allow_missing_images: true
 
       - name: Print application URL
         env:
