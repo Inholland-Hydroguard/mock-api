@@ -1,6 +1,11 @@
 name: Openshift Mock api CI/CD
 # https://github.com/redhat-actions/starter-workflows/blob/main/deployments/openshift.yml
 
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
 env:
   OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
