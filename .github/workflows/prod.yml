@@ -131,6 +131,7 @@ jobs:
           image: ${{ steps.push-image.outputs.registry-path }}
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
           port: ${{ env.OPENSHIFT_APP_PORT }}
+          allow_missing_images: true
 
       - name: Print application URL
         env:
