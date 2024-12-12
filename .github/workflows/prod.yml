@@ -14,11 +14,9 @@ env:
   OPENSHIFT_IMAGE_TAGS: ""
   OPENSHIFT_APP_PORT: ""
 
-#  registry things
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
   IMAGE_REGISTRY_USER: ${{ github.actor }}
   IMAGE_REGISTRY_PASSWORD: ${{ github.token }}
-
 
 on:
   push:
@@ -67,7 +65,7 @@ jobs:
             else {
               core.info(`✅ All the required secrets are set`);
             }
-            
+
             // Ensure the IMAGE_REGISTRY is lowercase
             const imageRegistry = `${{ env.IMAGE_REGISTRY }}`.toLowerCase();
             core.exportVariable('IMAGE_REGISTRY', imageRegistry);
@@ -79,11 +77,18 @@ jobs:
         if: env.OPENSHIFT_APP_NAME == ''
         run: |
           echo "OPENSHIFT_APP_NAME=$(basename $PWD)" | tee -a $GITHUB_ENV
-          
+
       - name: Determine image tags
         if: env.OPENSHIFT_IMAGE_TAGS == ''
         run: |
           echo "OPENSHIFT_IMAGE_TAGS=latest ${GITHUB_SHA::12}" | tee -a $GITHUB_ENV
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       # https://github.com/redhat-actions/buildah-build#readme
       - name: Build from Dockerfile
@@ -92,7 +97,6 @@ jobs:
         with:
           image: ${{ env.OPENSHIFT_APP_NAME }}
           tags: ${{ env.OPENSHIFT_IMAGE_TAGS }}
-
           dockerfiles: |
             ./Dockerfile
             
@@ -131,9 +135,8 @@ jobs:
           image: ${{ env.IMAGE_REGISTRY }}/${{ env.OPENSHIFT_APP_NAME }}:${{ env.OPENSHIFT_IMAGE_TAGS }}
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
           port: ${{ env.OPENSHIFT_APP_PORT }}
-          registry_hostname: ${{ env.IMAGE_REGISTRY }}
-          registry_username: ${{ env.IMAGE_REGISTRY_USER }}
-          registry_password: ${{ env.IMAGE_REGISTRY_PASSWORD }}
+          create_pull_secret_from: docker
+
 
       - name: Print application URL
         env:
