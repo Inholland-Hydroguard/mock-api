@@ -136,6 +136,7 @@ jobs:
           port: ${{ env.OPENSHIFT_APP_PORT }}
           create_pull_secret_from: docker
 
+
       - name: Print application URL
         env:
           ROUTE: ${{ steps.deploy-and-expose.outputs.route }}
