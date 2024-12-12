@@ -31,6 +31,7 @@ public class TaskController {
     public TasksDTO getAllTasks(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) UUID userId,
             @RequestParam(required = false) UUID plantId,
             @RequestParam(required = false) String description,
             @RequestParam(required = false) Boolean isCompleted,
@@ -51,6 +52,12 @@ public class TaskController {
         }
 
         List<TaskDTO> filteredTasks = tasks;
+
+        if (userId != null) {
+            filteredTasks = filteredTasks.stream()
+                    .filter(task -> task.getUserId().equals(userId))
+                    .collect(Collectors.toList());
+        }
 
         if (plantId != null) {
             filteredTasks = filteredTasks.stream()
@@ -109,6 +116,9 @@ public class TaskController {
         if (sortField != null) {
             Comparator<TaskDTO> comparator;
             switch (sortField) {
+                case "userId":
+                    comparator = Comparator.comparing(TaskDTO::getUserId);
+                    break;
                 case "plantId":
                     comparator = Comparator.comparing(TaskDTO::getPlantId);
                     break;

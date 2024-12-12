@@ -40,14 +40,13 @@ public class PlantController {
     @PostMapping(consumes = "multipart/form-data")
     public PlantDTO createPlant(
             @RequestParam("name") String name,
-            @RequestParam("householdId") UUID householdId,
             @RequestParam("species") String species,
             @RequestParam("description") String description,
             @RequestParam("image") MultipartFile image) {
 
         UUID id = UUID.randomUUID();
 
-        PlantDTO plantDTO = new PlantDTO(id, householdId, name, species, description, LocalDateTime.now(), LocalDateTime.now());
+        PlantDTO plantDTO = new PlantDTO(id, name, species, description, LocalDateTime.now(), LocalDateTime.now());
         plants.add(plantDTO);
         return plantDTO;
     }
@@ -58,7 +57,7 @@ public class PlantController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) UUID householdId,
+            @RequestParam(required = false) String householdId,
             @RequestParam(required = false) LocalDateTime createdFrom,
             @RequestParam(required = false) LocalDateTime createdTo,
             @RequestParam(required = false) LocalDateTime updatedFrom,
@@ -75,9 +74,9 @@ public class PlantController {
 
         List<PlantDTO> filteredPlants = plants;
 
-        if (householdId != null) {
+        if (householdId != null && !householdId.isEmpty()) {
             filteredPlants = filteredPlants.stream()
-                    .filter(plant -> plant.getHouseholdId().equals(householdId))
+                    .filter(plant -> plant.getHouseholdId().equals(UUID.fromString(householdId)))
                     .collect(Collectors.toList());
         }
 
