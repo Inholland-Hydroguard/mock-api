@@ -6,7 +6,7 @@ env:
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
   OPENSHIFT_NAMESPACE: "golf-dev"
   OPENSHIFT_APP_NAME: ""
-  OPENSHIFT_IMAGE_TAGS: "latest"
+  OPENSHIFT_IMAGE_TAGS: ""
   OPENSHIFT_APP_PORT: ""
 
 #  registry things
@@ -69,12 +69,12 @@ jobs:
       - name: Determine app name
         if: env.OPENSHIFT_APP_NAME == ''
         run: |
-          echo "APP_NAME=$(basename $PWD)" | tee -a $GITHUB_ENV
+          echo "OPENSHIFT_APP_NAME=$(basename $PWD)" | tee -a $GITHUB_ENV
           
       - name: Determine image tags
         if: env.OPENSHIFT_IMAGE_TAGS == ''
         run: |
-          echo "IMAGE_TAGS=latest ${GITHUB_SHA::12}" | tee -a $GITHUB_ENV
+          echo "OPENSHIFT_IMAGE_TAGS=latest ${GITHUB_SHA::12}" | tee -a $GITHUB_ENV
 
       # https://github.com/redhat-actions/buildah-build#readme
       - name: Build from Dockerfile
