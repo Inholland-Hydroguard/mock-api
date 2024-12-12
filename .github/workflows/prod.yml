@@ -6,7 +6,7 @@ env:
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
   OPENSHIFT_NAMESPACE: "golf-dev"
   OPENSHIFT_APP_NAME: ""
-  OPENSHIFT_IMAGE_TAGS: ""
+  OPENSHIFT_IMAGE_TAGS: "latest"
   OPENSHIFT_APP_PORT: ""
 
 #  registry things
