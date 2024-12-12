@@ -128,7 +128,7 @@ jobs:
         uses: redhat-actions/oc-new-app@v1
         with:
           app_name: ${{ env.OPENSHIFT_APP_NAME }}
-          image: ${{ steps.push-image.outputs.registry-path }}
+          image: ${{ env.IMAGE_REGISTRY }}/${{ steps.build-image.outputs.image }}:${{ steps.build-image.outputs.tags }}
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
           port: ${{ env.OPENSHIFT_APP_PORT }}
           allow_missing_images: true
