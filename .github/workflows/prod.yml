@@ -24,7 +24,7 @@
 
 # 👋 Visit our GitHub organization at https://github.com/redhat-actions/ to see our actions and provide feedback.
 
-name: OpenShift
+name: Openshift Mock api CI/CD
 
 env:
   # 🖊️ EDIT your repository secrets to log into your OpenShift cluster and set up the context.
@@ -61,8 +61,7 @@ on:
 jobs:
   openshift-ci-cd:
     name: Build and deploy to OpenShift
-    # ubuntu-20.04 can also be used.
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     environment: production
 
     outputs:
