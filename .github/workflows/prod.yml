@@ -10,7 +10,6 @@ env:
   OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
   OPENSHIFT_NAMESPACE: "golf-dev"
-  OPENSHIFT_APP_NAME: "mock-api"
   OPENSHIFT_IMAGE_TAGS: ""
   OPENSHIFT_APP_PORT: ""
 
@@ -30,11 +29,6 @@ on:
     branches: ["main"]
 
 jobs:
-  ## To keep the workflow simple, we will only be using oc-new-app action in the workflow and use the
-  ## 'petclinic' image which we already have on quay.io
-  #####################################################################################################################
-  ## The OpenShift Deploy step deploys the image that we have previously created and present on quay.io
-  ## It can then run any integration tests before deleting the resources that were created.
   openshift-deploy:
     name: Deploy to OpenShift
     strategy:
@@ -53,35 +47,24 @@ jobs:
         id: commit-data
         uses: redhat-actions/common/commit-data@v1
 
-      # Log into the OpenShift cluster using the secrets configured in the repository settings.
-      # The GitHub Ubuntu runners have oc pre-installed.
-      # If you're not using those runners, be sure to check out https://github.com/redhat-actions/openshift-tools-installer.
+      # https://github.com/redhat-actions/openshift-tools-installer.
       - name: OpenShift login
         uses: redhat-actions/oc-login@v1
         with:
           openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
           openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
-          # openshift_username:
-          # openshift_password:
           insecure_skip_tls_verify: true
           namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
 
-      - name: Create Image stream from the image
-        if: ${{ matrix.image-source == 'IMAGE_STREAM' }}
-        run: |
-          oc create is ${{ env.APP_NAME }}-${{ github.run_id }}
-          oc import-image ${{ env.APP_NAME }}-${{ github.run_id }} --from ${{ env.IMAGE_PATH }}
 
       # This step will create a deployment, service, and route to run your app and expose it to the internet.
       - name: Create and expose app
         id: oc-new-app
         # uses: redhat-actions/oc-new-app@v1 Test the checked-out version of this action - a user would need the above 'uses'.
         uses: ./
-        env:
-          IMAGE: ${{ env[matrix.image-source] }}
         with:
           app_name: ${{ env.APP_NAME }}-${{ steps.commit-data.outputs.short_sha }}
-          image: ${{ env.IMAGE }}
+          image: ${{ env.IMAGE_PATH }}
           namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
           build_env: |
             MY_ENV=MY_VALUE
@@ -107,11 +90,6 @@ jobs:
           warning_on_retry: false
           # Just check that the root endpoint returns a success status (-f flag).
           command: curl -sSfLi ${{ steps.oc-new-app.outputs.route }}
-
-      - name: Delete Image Stream
-        if: ${{ matrix.image-source == 'IMAGE_STREAM' && always() }}
-        run: |
-          oc delete is $(oc get is | grep ${{ env.APP_NAME }} | awk '{ print $1 }' )
 
       - name: Tear down
         if: always()
