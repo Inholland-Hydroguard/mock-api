@@ -145,6 +145,7 @@ jobs:
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
           port: ${{ env.OPENSHIFT_APP_PORT }}
           create_pull_secret_from: podman
+          additional_args: --allow-missing-images
 
       - name: Test project is running
         id: test-project
@@ -154,7 +155,7 @@ jobs:
           retry_wait_seconds: 10
           max_attempts: 30
           warning_on_retry: false
-          command: curl -sSfLi ${{ steps.oc-new-app.outputs.route }}
+          command: curl -sSfLi ${{ steps.deploy-and-expose.outputs.route }}
 
       - name: Print application URL
         env:
