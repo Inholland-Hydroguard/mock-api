@@ -133,8 +133,11 @@ jobs:
 
       - name: Create Image stream from the image
         run: |
+          const imageRegistry = `${{ env.IMAGE_REGISTRY }}`.toLowerCase();
+          core.exportVariable('IMAGE_REGISTRY', imageRegistry);
+          
           oc create is ${{ env.OPENSHIFT_APP_NAME }}-${{ github.run_id }}
-          oc import-image ${{ env.OPENSHIFT_APP_NAME }}-${{ github.run_id }} --from ${{ env.IMAGE_REGISTRY }}/${{ env.OPENSHIFT_APP_NAME }}:${{ env.OPENSHIFT_IMAGE_TAGS }}
+          oc import-image ${{ env.OPENSHIFT_APP_NAME }}-${{ github.run_id }} --from ${{ env.IMAGE_REGISTRY }}/${{ env.OPENSHIFT_APP_NAME }}:${{ steps.build-and-push.outputs.build-image.tags }}
 
       # This step should create a deployment, service, and route to run your app and expose it to the internet.
       # https://github.com/redhat-actions/oc-new-app#readme
@@ -143,7 +146,7 @@ jobs:
         uses: redhat-actions/oc-new-app@v1
         with:
           app_name: ${{ env.OPENSHIFT_APP_NAME }}
-          image: ${{ needs.build-and-push.outputs.build-image.outputs.image }}
+          image: ${{ env.OPENSHIFT_APP_NAME }}-${{ github.run_id }}
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
           port: ${{ env.OPENSHIFT_APP_PORT }}
           create_pull_secret_from: podman
