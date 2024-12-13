@@ -13,6 +13,10 @@ env:
   OPENSHIFT_APP_NAME: "mock-api"
   OPENSHIFT_IMAGE_TAGS: ""
   OPENSHIFT_APP_PORT: ""
+
+  IMAGE_PATH: ghcr.io/inholland-hydroguard/mock-api:latest
+  APP_NAME: mock-api
+  APP_PORT: 8080
   IMAGE_STREAM: ${{ secrets.OPENSHIFT_NAMESPACE }}/mock-api-${{ github.run_id }}
 
   IMAGE: ""
