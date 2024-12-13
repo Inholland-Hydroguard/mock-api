@@ -164,8 +164,6 @@ jobs:
             // remove docker// from image name
             const image = `${{ steps.build-and-push.outputs.build-image.image }}`.replace('docker://', '');
             core.exportVariable('IMAGE', image);
-            echo "IMAGE=${IMAGE}" | tee -a $GITHUB_ENV;
-
 
       - name: Install oc
         uses: redhat-actions/openshift-tools-installer@v1
@@ -180,6 +178,9 @@ jobs:
           openshift_token: ${{ env.OPENSHIFT_TOKEN }}
           insecure_skip_tls_verify: true
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+
+      - name: check image
+        run: echo ${{ env.IMAGE }}
 
       # This step should create a deployment, service, and route to run your app and expose it to the internet.
       # https://github.com/redhat-actions/oc-new-app#readme
