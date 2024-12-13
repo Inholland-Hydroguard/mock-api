@@ -145,10 +145,10 @@ jobs:
         uses: redhat-actions/oc-new-app@v1
         with:
           app_name: ${{ env.OPENSHIFT_APP_NAME }}
-          image: "ghcr.io/inholland-hydroguard/mock-api:9225aaceb840"
+          image: ${{ env.IMAGE }}
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
           port: ${{ env.OPENSHIFT_APP_PORT }}
-          create_pull_secret_from: podman
+          image_pull_secret_name: ${{ secrets.IMAGE_PULL_SECRET }}
 
       - name: Test project is running
         id: test-project
