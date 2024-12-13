@@ -31,11 +31,6 @@ on:
 jobs:
   openshift-deploy:
     name: Deploy to OpenShift
-    strategy:
-      max-parallel: 1
-      fail-fast: false
-      matrix:
-        image-source: [ "IMAGE_PATH", "IMAGE_STREAM" ]
 
     runs-on: ubuntu-22.04
     steps:
