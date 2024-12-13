@@ -23,8 +23,8 @@ on:
     branches: ["main"]
 
 jobs:
-  build-api:
-    name: Build java mock api
+  build-and-push:
+    name: Build and Push Image
     runs-on: ubuntu-latest
 
     steps:
@@ -111,6 +111,13 @@ jobs:
           username: ${{ env.IMAGE_REGISTRY_USER }}
           password: ${{ env.IMAGE_REGISTRY_PASSWORD }}
 
+  deploy:
+    name: Deploy to OpenShift
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+
       - name: Install oc
         uses: redhat-actions/openshift-tools-installer@v1
         with:
@@ -132,11 +139,10 @@ jobs:
         uses: redhat-actions/oc-new-app@v1
         with:
           app_name: ${{ env.OPENSHIFT_APP_NAME }}
-          image: ${{ env.IMAGE_REGISTRY }}/${{ env.OPENSHIFT_APP_NAME }}:${{ env.OPENSHIFT_IMAGE_TAGS }}
+          image: ${{ env.IMAGE_REGISTRY }}/${{ env.OPENSHIFT_APP_NAME }}:latest
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
           port: ${{ env.OPENSHIFT_APP_PORT }}
           create_pull_secret_from: docker
-
 
       - name: Print application URL
         env:
