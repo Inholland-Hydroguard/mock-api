@@ -14,6 +14,8 @@ env:
   OPENSHIFT_IMAGE_TAGS: ""
   OPENSHIFT_APP_PORT: ""
 
+  IMAGE: ""
+
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
   IMAGE_REGISTRY_USER: ${{ github.actor }}
   IMAGE_REGISTRY_PASSWORD: ${{ github.token }}
