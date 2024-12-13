@@ -164,7 +164,6 @@ jobs:
             // remove docker// from image name
             const image = `${{ steps.build-and-push.outputs.build-image.image }}`.replace('docker://', '');
             core.exportVariable('IMAGE', image);
-            echo "IMAGE=${IMAGE}" | tee -a $GITHUB_ENV;
 
       - name: Install oc
         uses: redhat-actions/openshift-tools-installer@v1
