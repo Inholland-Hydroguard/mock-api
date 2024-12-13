@@ -27,7 +27,7 @@ on:
 jobs:
   build-and-push:
     name: Build and Push Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     outputs:
       ROUTE: ${{ steps.deploy-and-expose.outputs.route }}
