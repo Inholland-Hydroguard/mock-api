@@ -135,7 +135,9 @@ jobs:
 
       - name: Create Image stream from the image
         run: |
-          oc create is ${{ env.OPENSHIFT_APP_NAME }}-${{ github.run_id }}
+          if ! oc get is ${{ env.OPENSHIFT_APP_NAME }}-${{ github.run_id }}; then
+            oc create is ${{ env.OPENSHIFT_APP_NAME }}-${{ github.run_id }}
+          fi
           oc import-image ${{ env.OPENSHIFT_APP_NAME }}-${{ github.run_id }} --from ${{ env.IMAGE }}
 
       # This step should create a deployment, service, and route to run your app and expose it to the internet.
@@ -159,6 +161,10 @@ jobs:
           max_attempts: 30
           warning_on_retry: false
           command: curl -sSfLi ${{ steps.oc-new-app.outputs.route }}
+
+      - name: Delete Image Stream
+        run: |
+          oc delete is $(oc get is | grep ${{ env.APP_NAME }} | awk '{ print $1 }' )
 
       - name: Print application URL
         env:
