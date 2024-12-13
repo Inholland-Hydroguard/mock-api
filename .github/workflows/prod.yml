@@ -135,7 +135,7 @@ jobs:
 
       - name: Remove docker:// prefix from IMAGE_REGISTRY
         run: |
-          IMAGE_FULL=${{ needs.build-and-push.outputs.image }}
+          IMAGE_FULL=${{ needs.build-and-push.steps.push-image.outputs.image }}
           IMAGE=${IMAGE_FULL#docker://}
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
       # This step should create a deployment, service, and route to run your app and expose it to the internet.
