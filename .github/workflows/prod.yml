@@ -136,7 +136,7 @@ jobs:
       - name: Verify GHCR login
         run: |
           echo "Verifying GHCR login..."
-          if ! docker pull ghcr.io/${{ github.repository_owner }}/${{ env.OPENSHIFT_APP_NAME }}:latest; then
+          if ! docker pull ${{ env.IMAGE }}; then
             echo "Failed to authenticate with GHCR"
             exit 1
           fi
