@@ -73,6 +73,13 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
 
+      - name: Login to registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.IMAGE_REGISTRY }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
       - name: Determine app name
         if: env.OPENSHIFT_APP_NAME == ''
         run: |
@@ -116,13 +123,6 @@ jobs:
       - name: Get commit short-sha
         id: commit-data
         uses: redhat-actions/common/commit-data@v1
-
-      - name: Login to registry
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ env.IMAGE_REGISTRY }}
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       # https://github.com/redhat-actions/openshift-tools-installer.
       - name: OpenShift login
