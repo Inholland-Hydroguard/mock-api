@@ -180,7 +180,7 @@ jobs:
       - name: Create Image stream from the image
         run: |          
           oc create is ${{ env.OPENSHIFT_APP_NAME }}-${{ github.run_id }}
-          oc import-image ${{ env.OPENSHIFT_APP_NAME }}-${{ github.run_id }} --from ${{ env.IMAGE }} --confirm
+          oc import-image ${{ env.OPENSHIFT_APP_NAME }}-${{ github.run_id }} --from ${{ env.IMAGE }}
 
       # This step should create a deployment, service, and route to run your app and expose it to the internet.
       # https://github.com/redhat-actions/oc-new-app#readme
