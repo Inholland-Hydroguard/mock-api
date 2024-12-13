@@ -107,7 +107,7 @@ jobs:
           password: ${{ env.IMAGE_REGISTRY_PASSWORD }}
 
       - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: redhat-actions/podman-login@v1
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -150,7 +150,7 @@ jobs:
           image: ${{ env.IMAGE }}
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
           port: ${{ env.OPENSHIFT_APP_PORT }}
-          create_pull_secret_from: docker
+          create_pull_secret_from: podman
 
       - name: Test project is running
         id: test-project
