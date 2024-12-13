@@ -106,13 +106,6 @@ jobs:
           username: ${{ env.IMAGE_REGISTRY_USER }}
           password: ${{ env.IMAGE_REGISTRY_PASSWORD }}
 
-      - name: Log in to GitHub Container Registry
-        uses: redhat-actions/podman-login@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Install oc
         uses: redhat-actions/openshift-tools-installer@v1
         with:
@@ -132,6 +125,21 @@ jobs:
           REGISTRY_PATH=${{ steps.push-image.outputs.registry-path }}
           IMAGE=${REGISTRY_PATH#docker://}
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+
+      - name: Log in to GitHub Container Registry
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify GHCR login
+        run: |
+          echo "Verifying GHCR login..."
+          if ! docker pull ghcr.io/${{ github.repository_owner }}/${{ env.OPENSHIFT_APP_NAME }}:latest; then
+            echo "Failed to authenticate with GHCR"
+            exit 1
+          fi
 
       - name: Create Image stream from the image
         run: |
