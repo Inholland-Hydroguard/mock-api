@@ -143,7 +143,6 @@ jobs:
           build_env: |
             MY_ENV=MY_VALUE
           port: ${{ env.APP_PORT }}
-          # create_pull_secret_from: podman
           # registry: quay.io
           # registry_username: ${{ env.REGISTRY_USERNAME }}
           # registry_password: ${{ secrets.REGISTRY_PASSWORD }}
