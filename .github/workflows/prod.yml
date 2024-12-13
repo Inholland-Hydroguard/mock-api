@@ -177,11 +177,6 @@ jobs:
           insecure_skip_tls_verify: true
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
 
-      - name: Create Image stream from the image
-        run: |          
-          oc create is ${{ env.OPENSHIFT_APP_NAME }}-${{ github.run_id }}
-          oc import-image ${{ env.OPENSHIFT_APP_NAME }}-${{ github.run_id }} --from ${{ env.IMAGE }}
-
       # This step should create a deployment, service, and route to run your app and expose it to the internet.
       # https://github.com/redhat-actions/oc-new-app#readme
       - name: Create and expose app
@@ -189,15 +184,10 @@ jobs:
         uses: redhat-actions/oc-new-app@v1
         with:
           app_name: ${{ env.OPENSHIFT_APP_NAME }}
-          image: ${{ env.OPENSHIFT_APP_NAME }}-${{ github.run_id }}
+          image: ${{ env.IMAGE }}
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
           port: ${{ env.OPENSHIFT_APP_PORT }}
           create_pull_secret_from: podman
-
-      - name: Delete Image stream
-        run: |
-          oc delete is ${{ env.OPENSHIFT_APP_NAME }}-${{ github.run_id }}
-          
 
       - name: Test project is running
         id: test-project
