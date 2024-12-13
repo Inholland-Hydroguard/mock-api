@@ -187,7 +187,7 @@ jobs:
           image: ${{ env.IMAGE }}
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
           port: ${{ env.OPENSHIFT_APP_PORT }}
-          create_pull_secret_from: podman
+          create_pull_secret_from: docker
 
       - name: Test project is running
         id: test-project
