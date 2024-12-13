@@ -141,6 +141,19 @@ jobs:
             exit 1
           fi
 
+      - name: Create pull secret in OpenShift
+        run: |
+          oc create secret docker-registry ghcr-pull-secret \
+            --docker-server=ghcr.io \
+            --docker-username=${{ github.actor }} \
+            --docker-password=${{ secrets.GITHUB_TOKEN }} \
+            --docker-email=unused@example.com \
+            --namespace=${{ env.OPENSHIFT_NAMESPACE }}
+
+      - name: Link pull secret to default service account
+        run: |
+          oc secrets link default ghcr-pull-secret --for=pull --namespace=${{ env.OPENSHIFT_NAMESPACE }}
+
       - name: Create Image stream from the image
         run: |
           if ! oc get is ${{ env.OPENSHIFT_APP_NAME }}-${{ github.run_id }}; then
