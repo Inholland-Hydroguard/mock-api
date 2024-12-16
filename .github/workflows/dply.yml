@@ -24,7 +24,7 @@ env:
   IMAGE_REGISTRY_USER: ${{ secrets.DOCKERHUB_USERNAME }}
   IMAGE_REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-  REPO_OWNER: ${{ github.repository_owner }}.toLowerCase()
+  REPO_OWNER:
 
 on:
   push:
@@ -46,6 +46,10 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}           
+
+    - name: set env vars
+      run: |
+        echo "REPO_OWNER=$(echo ${{ github.repository_owner }} | tr '[:lower:]')" >> $GITHUB_ENV
 
     # Build the Docker image
     - name: Build Docker image
