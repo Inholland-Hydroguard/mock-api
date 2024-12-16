@@ -71,8 +71,8 @@ jobs:
     # Import image from GHCR to OpenShift
     - name: Import Docker image into OpenShift
       run: |
-       oc project ${{ env.OPENSHIFT_NAMESPACE }}
-       oc import-image ${{ env.APP_NAME }} --from=ghcr.io/${{ env.REPO_OWNER }}/${{ github.event.repository.name }}:latest --confirm
+        oc project ${{ env.OPENSHIFT_NAMESPACE }}
+        oc import-image ${{ env.APP_NAME }} --from=ghcr.io/${{ env.REPO_OWNER }}/${{ github.event.repository.name }}:latest --confirm
 
    # Update or create OpenShift deployment
     - name: Deploy application in OpenShift
