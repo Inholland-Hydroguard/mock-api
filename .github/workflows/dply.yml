@@ -73,26 +73,5 @@ jobs:
       env:
         KUBECONFIG: /tmp/kubeconfig
       run: |
-       oc apply -f - <<EOF
-       apiVersion: apps.openshift.io/v1
-       kind: DeploymentConfig
-       metadata:
-         name: ${{ env.APP_NAME }}
-       spec:
-         replicas: 1
-         selector:
-           app: ${{ env.APP_NAME }}
-         template:
-           metadata:
-             labels:
-               app: ${{ env.APP_NAME }}
-           spec:
-             containers:
-             - name: ${{ env.APP_NAME }}
-               image: ghcr.io/${{ env.REPO_OWNER }}/${{ github.event.repository.name }}:latest
-               ports:
-               - containerPort: ${{ env.APP_PORT }}
-         strategy:
-           type: Recreate
-       EOF
+       oc new-app ghcr.io/inholland-hydroguard/mock-api:latest --name=mock-api
 
