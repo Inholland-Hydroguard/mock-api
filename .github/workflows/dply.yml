@@ -73,9 +73,13 @@ jobs:
       run: |
         oc project ${{ env.OPENSHIFT_NAMESPACE }}
         oc import-image ${{ env.APP_NAME }} --from=ghcr.io/${{ env.REPO_OWNER }}/${{ github.event.repository.name }}:latest --confirm
-
+      env:
+        KUBECONFIG: /tmp/kubeconfig
+    
    # Update or create OpenShift deployment
     - name: Deploy application in OpenShift
+      env:
+        KUBECONFIG: /tmp/kubeconfig
       run: |
        oc apply -f - <<EOF
        apiVersion: apps.openshift.io/v1
