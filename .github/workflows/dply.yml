@@ -68,6 +68,18 @@ jobs:
       env:
         KUBECONFIG: /tmp/kubeconfig
 
+    - name: Create OpenShift secret for GHCR
+      run: |
+        oc project ${{ env.OPENSHIFT_NAMESPACE }}
+        oc create secret docker-registry ghcr-pull-secret \
+          --docker-server=ghcr.io \
+          --docker-username=${{ secrets.DOCKERHUB_USERNAME }} \
+          --docker-password=${{ secrets.DOCKERHUB_PASSWORD }} \
+          --docker-email=unused@example.com || true
+        oc secrets link default ghcr-pull-secret --for=pull
+      env:
+        KUBECONFIG: /tmp/kubeconfig
+
     # Import image from GHCR to OpenShift
     - name: Import Docker image into OpenShift
       run: |
