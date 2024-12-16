@@ -24,6 +24,8 @@ env:
   IMAGE_REGISTRY_USER: ${{ secrets.DOCKERHUB_USERNAME }}
   IMAGE_REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+  REPO_OWNER: ${{ github.repository_owner }}.toLowerCase()
+
 on:
   push:
     branches: ["test-ghcr"]
@@ -43,14 +45,14 @@ jobs:
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ secrets.GITHUB_TOKEN }}           
 
     # Build the Docker image
     - name: Build Docker image
       run: |
-        docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:latest .
+        docker build -t ghcr.io/${{ env.REPO_OWNER }}/${{ github.event.repository.name }}:latest .
 
     # Push the Docker image to GitHub Container Registry
     - name: Push Docker image
       run: |
-        docker push ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:latest
+        docker push ghcr.io/${{ env.REPO_OWNER }}/${{ github.event.repository.name }}:latest
