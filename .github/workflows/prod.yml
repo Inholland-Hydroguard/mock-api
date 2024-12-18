@@ -5,22 +5,15 @@ on:
       - main
 
 env:
-  IMAGE_PATH: ghcr.io/inholland-hydroguard/mock-api:latest
+  IMAGE_PATH: docker.io/timv22/hydroguard-mock-api:latest
+
   APP_NAME: mock-api-test
   APP_PORT: 8080
-  REGISTRY_USERNAME: ${{ github.actor }}
-  REGISTRY_PASSWORD: ${{ github.token }}
 
 jobs:
-  using-auth-file:
-    name: Create secret using auth file
-    strategy:
-      fail-fast: false
-      matrix:
-        auth-type: [ "docker", "podman" ]
-
+  using-registry-creds:
+    name: Create secret using registry creds
     runs-on: ubuntu-22.04
-
     steps:
       - uses: actions/checkout@v4
 
@@ -32,36 +25,15 @@ jobs:
           insecure_skip_tls_verify: true
           namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
 
-      - name: Docker login
-        if: ${{ matrix.auth-type == 'docker' }}
-        run: |
-          echo "${{ env.REGISTRY_PASSWORD }}" | docker login ghcr.io -u "${{ env.REGISTRY_USERNAME }}" --password-stdin
-
-      - name: Podman login
-        if: ${{ matrix.auth-type == 'podman' }}
-        uses: redhat-actions/podman-login@v1
-        with:
-          registry: ghcr.io
-          username: ${{ env.REGISTRY_USERNAME }}
-          password: ${{ env.REGISTRY_PASSWORD }}
-
-      - name: List Docker images
-        run: docker images
-
-      - name: List Podman images
-        if: ${{ matrix.auth-type == 'podman' }}
-        run: podman images
-
       # This step will create a deployment, service, and route to run your app and expose it to the internet.
       - name: Create and expose app
         id: oc-new-app
-        uses: redhat-actions/oc-new-app@v1
+        uses: redhat-actions/oc-new-app@v2
         with:
-          app_name: ${{ env.APP_NAME }}-${{ matrix.auth-type }}
+          app_name: ${{ env.APP_NAME }}-creds
           image: ${{ env.IMAGE_PATH }}
           namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
           port: ${{ env.APP_PORT }}
-          create_pull_secret_from: ${{ matrix.auth-type }}
 
       - name: Echo outputs
         run: |
