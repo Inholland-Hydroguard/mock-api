@@ -77,4 +77,5 @@ jobs:
       - name: Deploy/Update application
         run: |
           oc apply -f deployment_substituted.yml -n golf-dev
+          oc rollout status deploy/${{ env.APP_NAME }} -n golf-dev
 
