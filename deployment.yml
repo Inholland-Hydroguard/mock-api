@@ -4,7 +4,16 @@ metadata:
   namespace: golf-dev
   name: '${APP_NAME}'
   annotations: {
-     image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"${IMAGE}"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"${APP_NAME}\\")].image"}]'
+     image.openshift.io/triggers: '
+     [{
+       "from": {
+         "kind": "ImageStreamTag",
+         "name": "${IMAGE}",
+         "namespace": "golf-dev"
+       },
+       "fieldPath": "spec.template.spec.containers[?(@.name==\"web\")].image",,
+       "paused": "false"
+     }]'
   }
 spec:
   replicas: 1
@@ -37,7 +46,7 @@ spec:
       maxSurge: 25%
       maxUnavailable: 25%
   paused: false
-  revisionHistoryLimit: 10
+  revisionHistoryLimit: 2
   progressDeadlineSeconds: 600
   minReadySeconds: 0
 

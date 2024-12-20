@@ -48,11 +48,6 @@ jobs:
     name: deploy environment
     runs-on: ubuntu-latest
     needs: build-and-push-image
-    if: |
-      contains(github.event.head_commit.message, 'prod.yml') || 
-      contains(github.event.head_commit.message, 'deployment.yml') ||
-      contains(github.event.commits.*.modified, 'prod.yml') || 
-      contains(github.event.commits.*.modified, 'deployment.yml')
 
     steps:
       - uses: actions/checkout@v4
