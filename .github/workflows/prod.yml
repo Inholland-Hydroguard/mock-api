@@ -5,18 +5,65 @@ on:
       - main
 
 env:
-  IMAGE_PATH: docker.io/timv22/hydroguard-mock-api:latest
-
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/hydroguard-mock-api
+  # just leaver empty
+  IMAGE_TAGS: ""
   APP_NAME: mock-api-test
   APP_PORT: 8080
 
 jobs:
-  using-registry-creds:
-    name: Create secret using registry creds
-    runs-on: ubuntu-22.04
+  build-and-push-image:
+    name: Build and push image
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
+      - name: Determine app name
+        if: env.APP_NAME == ''
+        run: |
+          echo "APP_NAME=$(basename $PWD)" | tee -a $GITHUB_ENV
+
+      - name: Determine image tags
+        if: env.IMAGE_TAGS == ''
+        run: |
+          echo "IMAGE_TAGS=latest ${GITHUB_SHA::12}" | tee -a $GITHUB_ENV
+
+      # https://github.com/redhat-actions/buildah-build#readme
+      - name: Build from Dockerfile
+        id: build-image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.IMAGE_TAGS }}
+
+          dockerfiles: |
+            ./Dockerfile
+
+      - name: log in docker
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # https://github.com/redhat-actions/push-to-registry#readme
+      - name: Push image to registry
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.IMAGE_TAGS }}
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+
+  create-and-expose-app:
+    name: Create and expose app
+    runs-on: ubuntu-latest
+    needs: build-and-push-image
+    steps:
+      - uses: actions/checkout@v4
+
+      # https://github.com/redhat-actions/oc-login#readme
       - name: OpenShift login
         uses: redhat-actions/oc-login@v1
         with:
@@ -25,13 +72,13 @@ jobs:
           insecure_skip_tls_verify: true
           namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
 
-      # This step will create a deployment, service, and route to run your app and expose it to the internet.
+      # https://github.com/redhat-actions/oc-new-app#readme
       - name: Create and expose app
         id: oc-new-app
-        uses: redhat-actions/oc-new-app@v2
+        uses: redhat-actions/oc-new-app@v1
         with:
-          app_name: ${{ env.APP_NAME }}-creds
-          image: ${{ env.IMAGE_PATH }}
+          app_name: ${{ env.APP_NAME }}
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/hydroguard-mock-api:latest
           namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
           port: ${{ env.APP_PORT }}
 
