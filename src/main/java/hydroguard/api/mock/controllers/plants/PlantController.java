@@ -168,9 +168,4 @@ public class PlantController {
     public void deletePlant(@PathVariable UUID id) {
         plants.removeIf(plant -> plant.getId().equals(id));
     }
-
-    @GetMapping("/health")
-    public String health() {
-        return "OK";
-    }
 }
