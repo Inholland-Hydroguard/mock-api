@@ -201,6 +201,7 @@ public class ReoccurringTaskController {
         existingTask.setUpdatedAt(LocalDateTime.now());
         existingTask.setUserId(task.getUserId());
         existingTask.setPlantId(task.getPlantId());
+        existingTask.setIntervalSeconds(task.getIntervalSeconds());
         return ResponseEntity.ok(existingTask);
     }
 
