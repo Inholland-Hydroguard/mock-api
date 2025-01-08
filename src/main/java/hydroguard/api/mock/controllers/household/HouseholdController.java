@@ -205,21 +205,22 @@ public class HouseholdController {
         households.removeIf(household -> household.getId().equals(id));
     }
 
-    @DeleteMapping("/members")
-    public void removeMember(@RequestBody RemoveMemberDTO removeMemberDTO) {
+    @DeleteMapping("/{householdId}/members/{userId}")
+    public void removeMember(@PathVariable UUID householdId, @PathVariable UUID userId) {
         HouseholdDTO household = households.stream()
-                .filter(h -> h.getId().equals(removeMemberDTO.getHouseholdId()))
+                .filter(h -> h.getId().equals(householdId))
                 .findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Household not found"));
 
-        if (household.getMembers().stream().noneMatch(u -> u.getUserId().equals(removeMemberDTO.getUserId()))) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found in household");
+        if (household.getMembers().stream().noneMatch(u -> u.getUserId().equals(userId))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found in household");
         }
 
-        if (household.getMembers().stream().filter(u -> u.getRole().equals("Owner")).count() == 1) {
+        if (household.getMembers().stream().anyMatch(u -> u.getUserId().equals(userId) && "Owner".equals(u.getRole()))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot remove the owner of the household");
         }
 
-        household.getMembers().removeIf(u -> u.getUserId().equals(removeMemberDTO.getUserId()));
+        household.getMembers().removeIf(u -> u.getUserId().equals(userId));
+
     }
 }
