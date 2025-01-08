@@ -1,4 +1,4 @@
-name: Deploy application using private image
+name: MockAPI Deploy
 on:
   push:
     branches:
