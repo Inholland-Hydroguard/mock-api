@@ -221,5 +221,6 @@ public class HouseholdController {
         }
 
         household.getMembers().removeIf(u -> u.getUserId().equals(userId));
+
     }
 }
