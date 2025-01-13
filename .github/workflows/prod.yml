@@ -116,8 +116,13 @@ jobs:
         with:
           oc: 4
 
+      - name: Install envsubst
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gettext-base
+
       # https://github.com/redhat-actions/oc-login#readme
-      - name: Log in to OpenShift
+      - name: OpenShift login
         uses: redhat-actions/oc-login@v1
         with:
           openshift_server_url: ${{ env.OPENSHIFT_SERVER }}
