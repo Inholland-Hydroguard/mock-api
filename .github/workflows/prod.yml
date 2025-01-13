@@ -51,7 +51,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
+      
+      - name: Install oc
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: 4
+          
       - name: Install envsubst
         run: |
           sudo apt-get update
