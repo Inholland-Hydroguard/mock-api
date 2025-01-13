@@ -1,10 +1,6 @@
 package hydroguard.api.mock.controllers.household;
 
-import hydroguard.api.mock.models.household.AddHouseholdDTO;
-import hydroguard.api.mock.models.household.AddUserDTO;
-import hydroguard.api.mock.models.household.HouseholdDTO;
-import hydroguard.api.mock.models.household.HouseholdUserDTO;
-import hydroguard.api.mock.models.household.HouseholdsDTO;
+import hydroguard.api.mock.models.household.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -207,5 +203,24 @@ public class HouseholdController {
     @DeleteMapping("/{id}")
     public void deleteHousehold(@PathVariable UUID id) {
         households.removeIf(household -> household.getId().equals(id));
+    }
+
+    @DeleteMapping("/{householdId}/members/{userId}")
+    public void removeMember(@PathVariable UUID householdId, @PathVariable UUID userId) {
+        HouseholdDTO household = households.stream()
+                .filter(h -> h.getId().equals(householdId))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Household not found"));
+
+        if (household.getMembers().stream().noneMatch(u -> u.getUserId().equals(userId))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found in household");
+        }
+
+        if (household.getMembers().stream().anyMatch(u -> u.getUserId().equals(userId) && "Owner".equals(u.getRole()))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot remove the owner of the household");
+        }
+
+        household.getMembers().removeIf(u -> u.getUserId().equals(userId));
+
     }
 }

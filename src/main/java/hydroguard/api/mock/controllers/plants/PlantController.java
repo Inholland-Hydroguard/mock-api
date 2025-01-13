@@ -40,6 +40,7 @@ public class PlantController {
     @PostMapping(consumes = "multipart/form-data")
     public PlantDTO createPlant(
             @RequestParam("name") String name,
+            @RequestParam("householdId") UUID householdId,
             @RequestParam("species") String species,
             @RequestParam("description") String description,
             @RequestParam("image") MultipartFile image) {
@@ -47,6 +48,7 @@ public class PlantController {
         UUID id = UUID.randomUUID();
 
         PlantDTO plantDTO = new PlantDTO(id, name, species, description, LocalDateTime.now(), LocalDateTime.now());
+        plantDTO.setHouseholdId(householdId);
         plants.add(plantDTO);
         return plantDTO;
     }
