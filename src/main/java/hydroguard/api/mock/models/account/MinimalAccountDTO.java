@@ -14,6 +14,7 @@ public class MinimalAccountDTO {
     private UUID id;
     private String name;
     private String username;
+    private String email;
     private String avatarUrl;
     private boolean publicProfile;
 }

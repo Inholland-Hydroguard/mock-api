@@ -38,6 +38,7 @@ public class AccountController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String username,
             @RequestParam(required = false) String avatarUrl,
+            @RequestParam(required = false) String email,
             @RequestParam(required = false) LocalDateTime createdFrom,
             @RequestParam(required = false) LocalDateTime createdTo,
             @RequestParam(required = false) LocalDateTime updatedFrom,
@@ -55,7 +56,7 @@ public class AccountController {
         List<AccountDTO> filteredAccounts = accounts;
 
         filteredAccounts = filteredAccounts.stream()
-                .filter(account -> account.isPublicProfile())
+                .filter(AccountDTO::isPublicProfile)
                 .collect(Collectors.toList());
 
         if (name != null && !name.isEmpty()) {
@@ -73,6 +74,12 @@ public class AccountController {
         if (avatarUrl != null && !avatarUrl.isEmpty()) {
             filteredAccounts = filteredAccounts.stream()
                     .filter(account -> account.getAvatarUrl().contains(avatarUrl))
+                    .collect(Collectors.toList());
+        }
+
+        if (email != null && !email.isEmpty()) {
+            filteredAccounts = filteredAccounts.stream()
+                    .filter(account -> account.getEmail().contains(email))
                     .collect(Collectors.toList());
         }
 
@@ -109,6 +116,9 @@ public class AccountController {
                 case "username":
                     comparator = Comparator.comparing(AccountDTO::getUsername);
                     break;
+                case "email":
+                    comparator = Comparator.comparing(AccountDTO::getEmail);
+                    break;
                 case "avatarUrl":
                     comparator = Comparator.comparing(AccountDTO::getAvatarUrl);
                     break;
@@ -138,6 +148,7 @@ public class AccountController {
                         account.getId(),
                         account.getName(),
                         account.getUsername(),
+                        account.getEmail(),
                         account.getAvatarUrl(),
                         account.isPublicProfile()))
                 .collect(Collectors.toList());
