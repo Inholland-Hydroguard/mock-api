@@ -4,6 +4,7 @@ import hydroguard.api.mock.models.friends.AddFriendDTO;
 import hydroguard.api.mock.models.friends.Friend;
 import hydroguard.api.mock.models.friends.FriendsDTO;
 import hydroguard.api.mock.models.friends.UpdateFriendStatusDTO;
+import jakarta.annotation.PostConstruct;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,18 @@ public class FriendsController {
     // List that means created objects persist throughout a running application's lifetime
     private final List<Friend> friendsList = new ArrayList<>();
     private final String mockUserId = "00000000-0000-0000-0000-000000000000";
+
+    @PostConstruct
+    public void init() {
+        friendsList.add(new Friend(mockUserId, "934b03fa-d8f1-4d8b-8b03-fad8f17d8b0e", Friend.Status.ACCEPTED));
+        friendsList.add(new Friend(mockUserId, "a22883c0-76ba-42db-a883-c076ba32db10", Friend.Status.PENDING));
+        friendsList.add(new Friend("a22883c0-76ba-42db-a883-c076ba32db10", "934b03fa-d8f1-4d8b-8b03-fad8f17d8b0e", Friend.Status.DENIED));
+        friendsList.add(new Friend("a22883c0-76ba-42db-a883-c076ba32db10", UUID.randomUUID().toString(), Friend.Status.ACCEPTED));
+        friendsList.add(new Friend("a22883c0-76ba-42db-a883-c076ba32db10", UUID.randomUUID().toString(), Friend.Status.PENDING));
+        friendsList.add(new Friend("a22883c0-76ba-42db-a883-c076ba32db10", UUID.randomUUID().toString(), Friend.Status.ACCEPTED));
+        friendsList.add(new Friend(mockUserId, "dc2f92e9-5475-4f2a-af92-e95475df2ab5", Friend.Status.DENIED));
+    }
+
 
     // Invite a friend
     @PostMapping("/invite")

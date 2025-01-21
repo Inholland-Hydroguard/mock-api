@@ -12,6 +12,12 @@ public class Friend {
     private UUID userId2;
     private Status status;
 
+    public Friend(String userId1, String userId2, Status status) {
+        this.userId1 = UUID.fromString(userId1);
+        this.userId2 = UUID.fromString(userId2);
+        this.status = status;
+    }
+
     public Friend(String userId1, String userId2) {
         this.userId1 = UUID.fromString(userId1);
         this.userId2 = UUID.fromString(userId2);
